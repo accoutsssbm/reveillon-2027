@@ -44,6 +44,7 @@ async function reload(tables = db.TABLES) {
     const res = await Promise.all(tables.map(t => db.load(t)));
     tables.forEach((t, i) => { if (t === 'config') S.config = res[i][0] || {}; else S[t] = res[i]; });
     if (auth) S.contatos = Object.fromEntries((await db.loadContatos()).map(c => [c.pessoa_id, c.telefone]));
+    if (!auth) ui.admin = null; else if (ui.admin == null) ui.admin = await db.souAdmin();
     loaded = true; banner('');
   } catch (e) { banner(e.message); }
   schedule();
@@ -199,10 +200,10 @@ function famOpts(pref) {
     <label class="ck"><input type="checkbox" id="${pref}-junto" checked><span>Cobrar todos juntos, no nome da primeira pessoa</span></label>
     <p class="mut">Desmarque para cada adulto receber a própria cobrança. Dá para mudar depois.</p></div>`;
 }
-function regRow(i) {
+function regRow(i, org) {
   return `<div class="reg-row"><div class="f3">
-    <label class="l">Nome${i ? '' : ' (você)'}<input name="nome" required autocomplete="${i ? 'off' : 'name'}"></label>
-    <label class="l">WhatsApp${i ? ' (opcional)' : ''}<input name="tel" inputmode="tel" autocomplete="${i ? 'off' : 'tel'}" placeholder="(94) 9 9999-9999"></label>
+    <label class="l">Nome${i || org ? '' : ' (você)'}<input name="nome" required autocomplete="${i || org ? 'off' : 'name'}"></label>
+    <label class="l">WhatsApp${i || org ? ' (opcional)' : ''}<input name="tel" inputmode="tel" autocomplete="${i ? 'off' : 'tel'}" placeholder="(94) 9 9999-9999"></label>
     <label class="l">Idade<select name="tipo"><option value="adulto">Adulto</option><option value="crianca">Criança</option></select></label></div>
     <label class="ck"><input type="checkbox" name="dorme"><span>Vai dormir e tomar café da manhã</span></label>
     ${i ? '<button type="button" class="x" data-act="reg-del" aria-label="Tirar pessoa">Tirar</button>' : ''}</div>`;
@@ -279,6 +280,37 @@ function openEsqueci() {
   <p class="mut">Se você entra só com o nome (sem e-mail), não há para onde mandar o link: peça a quem administra a festa para trocar sua senha no Supabase.</p>
   <div class="row"><button class="btn pri">Enviar link</button><button type="button" class="btn ghost" data-act="dlg-close">Cancelar</button></div></form>`);
 }
+function openMinhaSenha() {
+  openDlg(`<h2>Mudar minha senha</h2>
+  <form id="f-minhasenha"><label class="l">Senha atual${pwField('a', 'current-password')}</label>
+  <label class="l">Senha nova (mínimo 6 caracteres)${pwField('s', 'new-password')}</label>
+  <label class="l">Repita a senha nova${pwField('s2', 'new-password')}</label>
+  <div class="row"><button class="btn pri">Salvar senha</button><button type="button" class="btn ghost" data-act="dlg-close">Cancelar</button></div></form>`);
+}
+async function openOrganizadores() {
+  let lista = [];
+  try { lista = await db.rpc('listar_organizadores'); } catch (e) { return toast(e.message); }
+  openDlg(`<h2>Organizadores</h2>
+  <p class="mut">Quem está aqui entra na tela da Organização e mexe em tudo, menos nesta lista.</p>
+  <div>${lista.map(o => `<div class="pick-row"><span class="grow nm">${esc(o.email)}</span>${o.admin ? tag('admin', 'ok')
+    : `<span class="row"><button type="button" class="btn sm" data-act="org-senha" data-v="${esc(o.email)}">Nova senha</button><button type="button" class="x" data-act="org-del" data-v="${esc(o.email)}">Remover</button></span>`}</div>`).join('')}</div>
+  <h3 class="mt">Cadastrar organizador</h3>
+  <form id="f-org"><div class="f2"><label class="l">Usuário${db.orgDomain ? ` (vira usuário@${esc(db.orgDomain)})` : ' (e-mail)'}<input name="u" autocomplete="off" required></label>
+  <label class="l">Senha inicial (mínimo 6)${pwField('s', 'new-password')}</label></div>
+  <p class="mut">Passe o usuário e a senha para a pessoa. Depois ela troca em Painel › Acesso › Mudar minha senha.</p>
+  <div class="row"><button class="btn pri">Cadastrar</button><button type="button" class="btn ghost" data-act="dlg-close">Fechar</button></div></form>`);
+}
+function openSenhaOrg(email) {
+  openDlg(`<h2>Nova senha</h2><p>Para <b>${esc(email)}</b>. Passe a senha nova para a pessoa; ela pode trocar depois em Painel › Acesso.</p>
+  <form id="f-orgsenha"><input type="hidden" name="email" value="${esc(email)}">
+  <label class="l">Senha nova (mínimo 6 caracteres)${pwField('s', 'new-password')}</label>
+  <div class="row"><button class="btn pri">Salvar senha</button><button type="button" class="btn ghost" data-act="orgs-open">Voltar</button></div></form>`);
+}
+async function removerOrg(email) {
+  if (!confirm(`Remover ${email}? A pessoa perde o acesso à Organização. Não dá para desfazer; para voltar, cadastre de novo.`)) return;
+  try { await db.rpc('remover_organizador', { p_email: email }); toast(`${email} removido.`); openOrganizadores(); }
+  catch (err) { toast(err.message); }
+}
 function openNovaSenha() {
   openDlg(`<h2>Criar senha nova</h2>
   <form id="f-novasenha"><label class="l">Senha nova (mínimo 6 caracteres)${pwField('s', 'new-password')}</label>
@@ -308,6 +340,8 @@ function vPainel() {
   <section class="card"><h3>Link para os convidados</h3><p class="mut">Mande no grupo. Quem abre vê a festa, confirma presença e escolhe o que levar. Não consegue mexer em preços nem pagamentos.</p>
     <div class="row"><input readonly value="${esc(guestUrl())}" aria-label="Link"><button class="btn" data-act="copy" data-v="${esc(guestUrl())}">Copiar</button></div></section>
   </div>
+  <section class="card"><h3>Acesso</h3><p class="mut">${ui.admin ? 'Você é a admin principal: cadastra quem organiza a festa. Cada um troca a própria senha aqui.' : 'Troque a senha que você recebeu por uma sua.'}</p>
+    <div class="row"><button class="btn" data-act="senha-open">Mudar minha senha</button>${ui.admin ? '<button class="btn" data-act="orgs-open">Organizadores</button>' : ''}</div></section>
   ${vDivulgar()}
   <section class="card"><h3>Dados da festa e regras</h3><div class="f3">
     <label class="l">Nome do evento${inp('config', 1, 'evento', c.evento)}</label>
@@ -373,13 +407,9 @@ function vPessoas() {
   const cnt = k => S.pessoas.filter(p => p.status === k).length;
   return `<h1 class="pt">Pessoas</h1>
   <div class="row stats">${tag(cnt('sim') + ' vão', 'ok')}${tag(cnt('talvez') + ' talvez', 'warn')}${tag(cnt('pend') + ' sem resposta')}${tag(cnt('nao') + ' não vão')}${tag((C.dA + C.dK) + ' dormem')}</div>
-  <form class="card add" id="f-pessoa"><h3>Adicionar</h3><div class="f3">
-    <label class="l">Nome<input name="nome" required></label>
-    <label class="l">WhatsApp<input name="tel" inputmode="tel"></label>
-    <label class="l">Idade<select name="tipo"><option value="adulto">Adulto</option><option value="crianca">Criança</option></select></label>
-    <label class="l">Resposta<select name="status">${opt(ST, 'pend')}</select></label></div>
-    <div class="row"><label class="ck"><input type="checkbox" name="dorme"><span>Vai dormir</span></label><span class="grow"></span>
-    <button type="button" class="btn" data-act="imp-open" data-mode="org">Importar lista</button><button class="btn pri">Adicionar</button></div></form>
+  <div class="card add"><h3>Adicionar</h3><p class="mut">Cadastre uma pessoa sozinha, uma família inteira ou alguém numa família que já existe.</p>
+    <div class="row"><button type="button" class="btn pri" data-act="pes-open">Adicionar pessoa ou família</button>
+    <button type="button" class="btn" data-act="imp-open" data-mode="org">Importar lista</button></div></div>
   <div class="cards">${ps.map(p => { const tel = S.contatos[p.id] || ''; const n = C.load[p.id] || 0;
     return `<div class="card pc ${p.status === 'nao' ? 'off' : ''}">
     <div class="r2">${inp('pessoas', p.id, 'nome', p.nome, { a: 'Nome', cls: 'strong' })}<button class="x" data-act="del" data-tb="pessoas" data-id="${p.id}">Excluir</button></div>
@@ -559,8 +589,37 @@ const VIEWS = { inicio: vInicio, confirmar: vConfirmar, cardapio: vCardapioG, pa
 
 /* ================= diálogos ================= */
 const dlg = () => $('#dlg');
-function openDlg(html) { $('#dlg-body').innerHTML = html; dlg().showModal(); const f = $('#dlg-body input, #dlg-body textarea'); if (f) f.focus(); }
+function openDlg(html) { $('#dlg-body').innerHTML = html; if (!dlg().open) dlg().showModal(); const f = $('#dlg-body input, #dlg-body textarea'); if (f) f.focus(); }
 const closeDlg = () => dlg().close();
+
+// --- organizador: adicionar pessoa ou família ---
+function openPessoas() {
+  const chefes = by(S.pessoas.filter(p => !p.de), 'nome');
+  openDlg(`<h2>Adicionar pessoa ou família</h2>
+  <form id="f-pes"><div id="pes-rows">${regRow(0, true)}</div>
+  <button type="button" class="btn" data-act="reg-add" data-w="pes-rows">+ Outra pessoa da família</button>
+  <div class="f2 mt"><label class="l">Família<select name="fam"><option value="">Nova família (a primeira pessoa é a responsável)</option>${chefes.map(p => `<option value="${p.id}">Entrar na família de ${esc(p.nome)}</option>`).join('')}</select></label>
+  <label class="l">Resposta<select name="status">${opt(ST, 'pend')}</select></label></div>
+  <label class="ck"><input type="checkbox" name="junto" checked><span>Cobrar a família junto, no nome da responsável (só vale para família nova)</span></label>
+  <div class="row"><button class="btn pri">Cadastrar</button><button type="button" class="btn ghost" data-act="dlg-close">Cancelar</button></div></form>`);
+}
+async function salvarPessoas(f, v) {
+  const rows = $$('.reg-row', f).map(r => ({ nome: $('[name=nome]', r).value.trim(), tel: $('[name=tel]', r).value, tipo: $('[name=tipo]', r).value, dorme: $('[name=dorme]', r).checked })).filter(r => r.nome);
+  if (!rows.length) return;
+  const base = r => ({ nome: r.nome, tipo: r.tipo, status: v.status, dorme: r.dorme });
+  closeDlg();
+  await write(async () => {
+    let ins;
+    if (v.fam) ins = await db.insert('pessoas', rows.map(r => ({ ...base(r), de: v.fam })));
+    else {
+      ins = await db.insert('pessoas', [{ ...base(rows[0]), cobrar_junto: !!v.junto }]);
+      if (rows.length > 1) ins = ins.concat(await db.insert('pessoas', rows.slice(1).map(r => ({ ...base(r), de: ins[0].id }))));
+    }
+    const tels = ins.map((p, i) => ({ pessoa_id: p.id, telefone: String(rows[i].tel || '').replace(/[^\d+]/g, '') })).filter(t => t.telefone);
+    if (tels.length) await db.insert('contatos', tels);
+    toast(`${ins.length} pessoa(s) cadastrada(s).`);
+  }, ['pessoas']);
+}
 
 // --- importar lista de pessoas ---
 let imp = { mode: 'org', rows: [] };
@@ -740,6 +799,10 @@ function bind() {
         i.type = ver ? 'text' : 'password'; b.setAttribute('aria-pressed', ver); b.setAttribute('aria-label', ver ? 'Ocultar senha' : 'Mostrar senha'); i.focus(); break;
       }
       case 'pw-forgot': openEsqueci(); break;
+      case 'senha-open': openMinhaSenha(); break;
+      case 'orgs-open': openOrganizadores(); break;
+      case 'org-senha': openSenhaOrg(b.dataset.v); break;
+      case 'org-del': removerOrg(b.dataset.v); break;
       // convidado
       case 'g-st': guestUpdate(id, { p_status: b.dataset.v }); break;
       case 'g-pick': case 'g-drop': {
@@ -749,7 +812,8 @@ function bind() {
         catch (err) { toast(err.message); }
         reload([b.dataset.tb]); break;
       }
-      case 'reg-add': { const w = $('#reg-rows'); w.insertAdjacentHTML('beforeend', regRow(w.children.length)); $$('input[name="nome"]', w).pop().focus(); break; }
+      case 'reg-add': { const w = $('#' + (b.dataset.w || 'reg-rows')); w.insertAdjacentHTML('beforeend', regRow(w.children.length, !!b.dataset.w)); $$('input[name="nome"]', w).pop().focus(); break; }
+      case 'pes-open': openPessoas(); break;
       case 'reg-del': b.closest('.reg-row').remove(); break;
       // importação
       case 'imp-open': openImport(b.dataset.mode); break;
@@ -795,6 +859,22 @@ function bind() {
       catch (err) { toast(err.message); }
       return;
     }
+    if (f.id === 'f-minhasenha') {
+      if (v.s !== v.s2) return toast('As duas senhas novas não são iguais.');
+      try { await db.trocarSenha(v.a, v.s); closeDlg(); toast('Senha alterada.'); } catch (err) { toast(err.message); }
+      return;
+    }
+    if (f.id === 'f-orgsenha') {
+      try { await db.rpc('redefinir_senha_organizador', { p_email: v.email, p_senha: v.s }); toast(`Senha de ${v.email} alterada.`); openOrganizadores(); }
+      catch (err) { toast(err.message); }
+      return;
+    }
+    if (f.id === 'f-org') {
+      const email = db.toEmail(v.u);
+      try { await db.rpc('criar_organizador', { p_email: email, p_senha: v.s }); toast(`Organizador ${email} cadastrado.`); openOrganizadores(); }
+      catch (err) { toast(err.message); }
+      return;
+    }
     if (f.id === 'f-reg') {
       const st = v.status || 'sim';
       const rows = $$('.reg-row', f).map(r => ({ nome: $('[name=nome]', r).value.trim(), telefone: $('[name=tel]', r).value, tipo: $('[name=tipo]', r).value, dorme: $('[name=dorme]', r).checked, status: st })).filter(r => r.nome);
@@ -802,11 +882,8 @@ function bind() {
       return;
     }
     if (!auth) return;
+    if (f.id === 'f-pes') return salvarPessoas(f, v);
     const nome = String(v.nome || '').trim(); if (!nome) return;
-    if (f.id === 'f-pessoa') await write(async () => {
-      const [p] = await db.insert('pessoas', [{ nome, tipo: v.tipo, status: v.status, dorme: !!v.dorme }]);
-      const t = String(v.tel || '').replace(/[^\d+]/g, ''); if (t) await db.insert('contatos', [{ pessoa_id: p.id, telefone: t }]);
-    }, ['pessoas']);
     if (f.id === 'f-insumo') await write(() => db.insert('insumos', [{ nome, un: v.un || 'un', preco: num(v.preco), grupo: String(v.grupo || 'Outros').trim() || 'Outros', est: false }]), ['insumos']);
     if (f.id === 'f-item') await write(() => db.insert('itens', [{ nome, cat: v.cat, tipo: v.tipo, n: num(v.n) || 1, conta: 'todos', un: v.un || 'un', preco: num(v.preco), sel: true }]), ['itens']);
     if (f.id === 'f-decor') await write(() => db.insert('decor', [{ nome, local: String(v.local || 'Outros').trim() || 'Outros', descr: v.descr || '', busca: nome, sel: true, mat: [] }]), ['decor']);
@@ -841,10 +918,30 @@ const HERO_SVG = (() => {
   return s;
 })();
 
+/* ================= instalar como app ================= */
+function initInstalar() {
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  const b = $('#instalar');
+  if (matchMedia('(display-mode: standalone)').matches || navigator.standalone) return; // já está aberto como app
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let pedido = null;
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); pedido = e; b.hidden = false; });
+  addEventListener('appinstalled', () => { b.hidden = true; pedido = null; });
+  if (ios) b.hidden = false;
+  b.addEventListener('click', async () => {
+    if (pedido) { pedido.prompt(); await pedido.userChoice; pedido = null; b.hidden = true; return; }
+    openDlg(`<h2>Instalar no iPhone</h2>
+    <p>1. Abra este endereço no <b>Safari</b>.<br>2. Toque em <b>Compartilhar</b> (o quadrado com a seta para cima).<br>3. Escolha <b>Adicionar à Tela de Início</b> e toque em <b>Adicionar</b>.</p>
+    <p class="mut">O ícone do Réveillon 2027 aparece na tela do celular e abre como app, sem a barra do navegador.</p>
+    <div class="row"><button class="btn pri" data-act="dlg-close">Entendi</button></div>`);
+  });
+}
+
 /* ================= início ================= */
 async function start() {
   applyTheme(store.get('rev27_tema', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
   $('#tema').addEventListener('click', toggleTheme);
+  initInstalar();
   initToast(); bind();
   if (!db.configured) { loaded = true; return schedule(); }
   db.onAuth(s => { const had = !!auth; auth = s; if (!!s !== had) reload(); });

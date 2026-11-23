@@ -58,8 +58,10 @@ export async function rpc(name, args) {
 
 // ----- login de organizador -----
 export async function session() { const { data } = await sb.auth.getSession(); return data.session; }
+// "maria" vira maria@DOMINIO_LOGIN; e-mail completo fica como está
+export const toEmail = user => user.includes('@') || !orgDomain ? user.trim() : `${user.trim().toLowerCase()}@${orgDomain}`;
 export async function login(user, senha) {
-  const email = user.includes('@') || !orgDomain ? user.trim() : `${user.trim().toLowerCase()}@${orgDomain}`;
+  const email = toEmail(user);
   const { data, error } = await sb.auth.signInWithPassword({ email, password: senha });
   if (error) fail(error);
   return data.session;
@@ -72,6 +74,16 @@ export async function novaSenha(senha) {
   const { error } = await sb.auth.updateUser({ password: senha });
   if (error) fail(error);
 }
+// troca a própria senha conferindo a atual antes
+export async function trocarSenha(atual, nova) {
+  const { data } = await sb.auth.getSession();
+  const email = data.session && data.session.user.email;
+  if (!email) throw new Error('Entre de novo para trocar a senha.');
+  const r = await sb.auth.signInWithPassword({ email, password: atual });
+  if (r.error) throw new Error(/Invalid login/i.test(r.error.message) ? 'Senha atual incorreta.' : traduz(r.error));
+  await novaSenha(nova);
+}
+export async function souAdmin() { try { return !!(await rpc('sou_admin')); } catch (e) { return false; } }
 export async function logout() { await sb.auth.signOut(); }
 export function onAuth(cb) { sb.auth.onAuthStateChange((_e, s) => cb(s)); }
 

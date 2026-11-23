@@ -68,6 +68,30 @@ A chave *anon* pode ficar pública no GitHub: ela só permite o que as regras do
 4. **Pessoas → Importar lista:** cole os nomes ou anexe um arquivo `.txt`, `.csv`, `.xlsx` ou contatos `.vcf`.
 5. **Painel → Link para os convidados:** copie e mande no grupo.
 
+## Instalar como app no celular
+
+O site instala como app (ícone na tela inicial, abre sem a barra do navegador). Funciona depois de publicado no GitHub Pages, porque precisa de endereço `https`.
+
+- **Android (Chrome):** aparece o botão **Instalar app** no topo da tela do convidado. Se não aparecer, menu ⋮ → **Instalar app** ou **Adicionar à tela inicial**.
+- **iPhone:** abra no **Safari** → **Compartilhar** → **Adicionar à Tela de Início**. O botão **Instalar app** mostra esse passo a passo.
+
+O app continua precisando de internet para ver e salvar os dados da festa.
+
+## Organizadores e senhas
+
+A admin principal cadastra os outros organizadores pelo próprio app, sem entrar no Supabase.
+
+1. Crie só o **seu** usuário pelo Supabase (passo 5 da seção 1).
+2. Abra `supabase/03_organizadores.sql`, troque `SEU_USUARIO@familia.festa` pelo seu e-mail de login, exatamente como aparece em **Authentication → Users**, cole no **SQL Editor** e clique em **Run**. Se o e-mail estiver errado, aparece “Não achei o usuário”. Corrija e rode de novo.
+3. No app: **Painel → Acesso → Organizadores** → digite o usuário (ex.: `maria`) e uma senha inicial → **Cadastrar**. Passe usuário e senha para a pessoa.
+4. Cada organizador troca a própria senha em **Painel → Acesso → Mudar minha senha**. É preciso digitar a senha atual.
+
+5. Na mesma lista, a admin tem **Nova senha** (para quem esqueceu: você define uma e passa para a pessoa) e **Remover** (tira o acesso; não dá para desfazer, só cadastrar de novo). A admin principal não pode ser removida.
+
+Só a admin vê a lista, cadastra, redefine senha e remove organizadores. Os demais organizadores veem apenas “Mudar minha senha”.
+
+Se você já tinha rodado o `03_organizadores.sql`, rode a versão nova de novo (com o seu e-mail na linha marcada) para ganhar Nova senha e Remover.
+
 ## Como as contas funcionam
 
 - **Comida:** cada receita tem “serve quantas pessoas”. O app multiplica pelo número de porções confirmadas (adulto = 1; criança = fração em “Criança come”). O café da manhã usa só quem marcou que vai dormir.
