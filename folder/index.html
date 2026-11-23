@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#121317">
+<link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<title>Folder Réveillon 2027</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Allura&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Layout: faixa escura de abertura (o mesmo "2027" prateado do app), depois seções em coluna:
+   texto à esquerda e celular à direita; no telefone, tudo empilha. */
+:root{
+  --bg:#f2f3f5; --panel:#ffffff; --panel2:#e9ebee; --ink:#141518; --mut:#5c616b; --line:#d9dce1;
+  --btn:#141518; --btn-ink:#ffffff; --ring:#e0a21b; --ok:#1d7a4c;
+  --night:#121317; --night2:#1d1f25; --night-ink:#eef0f3; --night-mut:#a8aeb8;
+  --silver:linear-gradient(180deg,#f7f8fa 0%,#c3c8cf 45%,#7c838d 55%,#dfe2e6 100%);
+  --f-body:'Outfit',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --f-script:'Allura','Snell Roundhand','Brush Script MT',cursive;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1013; --panel:#1a1c21; --panel2:#24272d; --ink:#eceef2; --mut:#a3a9b4; --line:#30343c;
+  --btn:#eceef2; --btn-ink:#121317; --ring:#f2b93b; --ok:#5fcf95; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0f1013; --panel:#1a1c21; --panel2:#24272d; --ink:#eceef2; --mut:#a3a9b4; --line:#30343c;
+  --btn:#eceef2; --btn-ink:#121317; --ring:#f2b93b; --ok:#5fcf95; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;margin:0}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{line-height:1.15;text-wrap:balance;margin:0}
+h2{font-size:clamp(28px,4.4vw,40px);font-weight:700;letter-spacing:-.02em}
+h3{font-size:20px;font-weight:600}
+p{margin:0}
+a{color:inherit}
+.mut{color:var(--mut)}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--ring);outline-offset:2px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:44px;padding:9px 18px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-weight:500;text-decoration:none}
+.btn.pri{background:var(--btn);color:var(--btn-ink);border-color:var(--btn)}
+
+/* ---------- abertura ---------- */
+.hero{background:var(--night);color:var(--night-ink);margin-top:calc(-1 * env(safe-area-inset-top,0px));padding-top:env(safe-area-inset-top,0px);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;opacity:.35;pointer-events:none;
+  background:repeating-linear-gradient(90deg,rgba(255,255,255,.55) 0 1px,transparent 1px 7px,rgba(255,255,255,.18) 7px 9px,transparent 9px 13px);
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.35) 55%,transparent 100%);mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.35) 55%,transparent 100%)}
+.hero .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:40px;align-items:center;padding-block:56px 64px}
+.script{font-family:var(--f-script);font-size:clamp(44px,7vw,72px);line-height:1;color:#fff}
+.n2027{display:inline-block;background-repeat:no-repeat;font-size:clamp(84px,15vw,168px);font-weight:800;letter-spacing:-.06em;line-height:.9;background:var(--silver);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.35)}
+.hero .lead{font-size:clamp(18px,2.2vw,21px);color:var(--night-ink);max-width:34ch;margin-top:18px}
+.hero .sub{color:var(--night-mut);margin-top:10px;max-width:46ch}
+.linkbox{margin-top:26px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.url{font-size:15px;background:var(--night2);border:1px solid #33363e;border-radius:12px;padding:10px 14px;color:var(--night-ink);user-select:all;word-break:break-all;min-width:0}
+.hero .btn{background:#fff;color:#121317;border-color:#fff}
+.hero .btn.ghost{background:transparent;color:#fff;border-color:#4a4e57}
+.qr{display:flex;gap:14px;align-items:center;margin-top:22px}
+.qr svg{width:104px;height:104px;border-radius:10px;flex:none}
+.qr p{font-size:14px;color:var(--night-mut);max-width:24ch}
+.hero .phone{justify-self:center;transform:rotate(3deg)}
+.jump{display:flex;gap:8px;flex-wrap:wrap;margin-top:30px}
+.jump a{font-size:14px;padding:7px 13px;border-radius:999px;border:1px solid #3d4049;text-decoration:none;color:var(--night-ink)}
+.jump a:hover{background:var(--night2)}
+
+/* ---------- celular ---------- */
+.phone{width:min(100%,300px);aspect-ratio:390/844;max-width:100%;border-radius:42px;padding:10px;background:#0b0c0e;box-shadow:0 0 0 1.5px #3b3e45,0 24px 50px -18px rgba(0,0,0,.55);position:relative;flex:none}
+.screen{position:relative;width:100%;height:100%;border-radius:33px;overflow:hidden;background:#f2f3f5}
+.screen img.shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;transition:opacity .35s ease}
+.notch{position:absolute;top:8px;left:50%;width:30%;height:22px;transform:translateX(-50%);background:#0b0c0e;border-radius:14px;z-index:5}
+
+/* ---------- seções ---------- */
+section.blk{padding-block:72px 24px}
+.head{display:grid;gap:10px;max-width:62ch;margin-bottom:30px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:48px;align-items:start}
+.two>.phone{width:300px}
+.two>div{min-width:0}
+
+/* seletor iPhone / Android e abas */
+.seg{display:inline-flex;padding:4px;border-radius:14px;background:var(--panel2);gap:4px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;padding:9px 16px;border-radius:10px;font-weight:500;color:var(--mut);min-height:40px}
+.seg button[aria-selected="true"]{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+
+/* passos da instalação */
+.steps{list-style:none;padding:0;margin:22px 0 0;display:grid;gap:8px;counter-reset:p}
+.steps li button{width:100%;text-align:left;display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start;padding:14px;border-radius:14px;border:1px solid transparent;background:transparent}
+.steps li button::before{counter-increment:p;content:counter(p);width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--panel2);color:var(--mut)}
+.steps li button[aria-current="step"]{background:var(--panel);border-color:var(--line)}
+.steps li button[aria-current="step"]::before{background:var(--btn);color:var(--btn-ink)}
+.steps b{display:block;font-weight:600}
+.steps span{display:block;color:var(--mut);font-size:15px;margin-top:2px}
+.steps li button:not([aria-current="step"]) span{display:none}
+.nav{display:flex;gap:10px;margin-top:16px;align-items:center}
+.nav .grow{flex:1}
+.nav small{color:var(--mut);font-variant-numeric:tabular-nums}
+.note{margin-top:22px;padding:14px 16px;border-radius:14px;background:var(--panel);border:1px solid var(--line);font-size:15px;color:var(--mut)}
+.note b{color:var(--ink)}
+
+/* desenhos do passo a passo (dentro do celular) */
+.ill{position:absolute;inset:0;font-family:-apple-system,'Segoe UI',Roboto,var(--f-body);color:#111;font-size:12px}
+.ill .site{position:absolute;left:0;right:0;bottom:0;background:#f2f3f5 url(img/g-inicio.jpg) top/100% auto no-repeat}
+.ill .dim{position:absolute;inset:0;background:rgba(0,0,0,.38)}
+.hl{position:absolute;border-radius:12px;box-shadow:0 0 0 3px var(--ring),0 0 0 8px color-mix(in srgb,var(--ring) 35%,transparent);animation:pulse 1.6s ease-in-out infinite;pointer-events:none}
+@keyframes pulse{50%{box-shadow:0 0 0 3px var(--ring),0 0 0 13px color-mix(in srgb,var(--ring) 0%,transparent)}}
+@media (prefers-reduced-motion:reduce){.hl{animation:none}.screen img.shot{transition:none}}
+.sbar{position:absolute;left:0;right:0;bottom:0;height:13%;background:#f7f7f8;border-top:1px solid #d6d6da;display:flex;flex-direction:column;justify-content:flex-start;padding:7px 10px 0;gap:7px}
+.sbar .addr{height:30px;border-radius:10px;background:#e6e6ea;display:flex;align-items:center;justify-content:center;font-size:11px;color:#333}
+.sbar .icons{display:flex;justify-content:space-around;align-items:center;color:#1a73e8}
+.sbar svg,.cbar svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cbar{position:absolute;left:0;right:0;top:0;height:11%;background:#fff;border-bottom:1px solid #ddd;display:flex;align-items:flex-end;gap:8px;padding:0 10px 8px;color:#444}
+.cbar .addr{flex:1;height:30px;border-radius:15px;background:#eef0f3;display:flex;align-items:center;padding:0 12px;font-size:11px;color:#333;min-width:0;overflow:hidden;white-space:nowrap}
+.sheet{position:absolute;left:6px;right:6px;bottom:6px;background:#f2f2f5;border-radius:18px;padding:10px;display:grid;gap:6px}
+.sheet .row{background:#fff;border-radius:11px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px;position:relative}
+.sheet .row i{font-style:normal;color:#666}
+.sheet .grab{width:36px;height:4px;border-radius:2px;background:#c7c7cc;margin:0 auto 4px}
+.modal{position:absolute;left:0;right:0;top:0;bottom:0;background:#f2f2f5;padding:44px 12px 12px;display:grid;align-content:start;gap:14px}
+.modal .top{display:flex;justify-content:space-between;align-items:center;font-size:12.5px;position:relative}
+.modal .top a{color:#0a64d8;text-decoration:none}
+.modal .card{background:#fff;border-radius:12px;padding:12px;display:flex;gap:12px;align-items:center}
+.modal .card img{width:48px;height:48px;border-radius:11px}
+.dlg{position:absolute;left:10%;right:10%;top:34%;background:#fff;border-radius:22px;padding:18px;display:grid;gap:12px;box-shadow:0 14px 40px rgba(0,0,0,.3)}
+.dlg .app{display:flex;gap:10px;align-items:center}
+.dlg .app img{width:40px;height:40px;border-radius:10px}
+.dlg .acts{display:flex;justify-content:flex-end;gap:16px;font-weight:600;color:#1a73e8;position:relative}
+.dlg .acts>span{position:relative;padding:4px 6px}
+.home{position:absolute;inset:0;background:radial-gradient(120% 70% at 20% 10%,#3b4a6b 0%,#202636 55%,#14161c 100%);padding:52px 14px 14px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px 10px;align-content:start}
+.home div{display:grid;justify-items:center;gap:4px;font-size:9.5px;color:#fff;text-align:center;position:relative}
+.home div i{display:block;width:100%;aspect-ratio:1;border-radius:22%;background:rgba(255,255,255,.18)}
+.home div img{width:100%;aspect-ratio:1;border-radius:22%}
+.home .hl{inset:-6px -6px 12px -6px;border-radius:16px}
+.chat{position:absolute;inset:0;background:#e9e3da;padding:56px 12px 12px;display:grid;align-content:start;gap:10px}
+.chat .b{background:#fff;border-radius:12px;padding:9px 11px;max-width:86%;font-size:12px;line-height:1.4;position:relative}
+.chat .b a{color:#0a64d8;word-break:break-all;text-decoration:underline}
+.chat .who{font-weight:600;color:#1d7a4c;font-size:11px}
+
+/* tour pelas telas */
+.tabs{margin-bottom:22px}
+.tour h3{font-size:24px}
+.tour ul{margin:14px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.tour li{display:grid;grid-template-columns:18px minmax(0,1fr);gap:10px}
+.tour li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--mut);margin-top:10px;justify-self:center}
+.thumbs{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+.thumbs button{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 12px;font-size:14px;color:var(--mut)}
+.thumbs button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink)}
+.who-tag{display:inline-block;font-size:13px;padding:3px 10px;border-radius:999px;background:var(--panel2);color:var(--mut);margin-bottom:12px}
+
+/* dúvidas */
+.faq{display:grid;gap:10px;max-width:760px}
+.faq details{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:4px 18px}
+.faq summary{cursor:pointer;font-weight:600;padding:12px 0;list-style:none;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-size:22px;line-height:1;color:var(--mut)}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 0 14px;color:var(--mut)}
+footer{padding-block:48px 56px;color:var(--mut);font-size:14px}
+footer .wrap{border-top:1px solid var(--line);padding-top:20px}
+
+@media (max-width:820px){
+  .hero .wrap{grid-template-columns:minmax(0,1fr);gap:34px;padding-block:40px 48px}
+  .hero .phone{width:min(100%,250px);transform:none}
+  .two{grid-template-columns:minmax(0,1fr);gap:28px}
+  .two .phone{justify-self:center;width:min(100%,280px)}
+  section.blk{padding-block:52px 12px}
+}
+
+/* ---------- versão para imprimir / PDF: tudo aberto, sem cliques ---------- */
+.print-only{display:none}
+@page{size:A4;margin:11mm 10mm}
+@media print{
+  :root,:root[data-theme="dark"],:root:not([data-theme="light"]){
+    --bg:#ffffff; --panel:#ffffff; --panel2:#eef0f2; --ink:#141518; --mut:#555a63; --line:#d9dce1;
+    --btn:#141518; --btn-ink:#ffffff; --ring:#e0a21b; color-scheme:light }
+  body{font-size:12.5px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #instalar,#convidados,#organizacao,.jump,#copiar,.linkbox .btn{display:none!important}
+  .print-only{display:block}
+  .hero{min-height:274mm;display:flex;align-items:center}
+  .hero .wrap{width:100%;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:24px;padding-block:30px 34px}
+  .hero .phone{width:220px;transform:rotate(3deg)}
+  .hero .lead{font-size:17px}
+  .wrap{padding-left:6mm;padding-right:6mm}
+  .pv{break-before:page;padding-block:4px 0}
+  .pv h2{font-size:26px;margin:6px 0 6px}
+  .pv>.wrap>.mut{max-width:70ch;margin-bottom:10px}
+  .ph{font-size:17px;margin:14px 0 10px}
+  .pgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 16px}
+  .pgrid.and{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .pstep{break-inside:avoid;display:grid;gap:5px;align-content:start}
+  .pstep .phone{width:280px;max-width:none;zoom:.52;box-shadow:0 0 0 1.5px #3b3e45}
+  .pstep p{font-size:12px;line-height:1.4}
+  .pstep .hl{animation:none}
+  .pv .note{margin-top:14px;font-size:12px}
+  .ptour{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:start;break-inside:avoid;padding-block:12px;border-top:1px solid var(--line)}
+  .ptour h3{font-size:17px}
+  .ptour ul{margin-top:8px;gap:6px}
+  .ptour li{font-size:12px;line-height:1.45}
+  .ptour li::before{margin-top:6px}
+  .pshots{display:flex;gap:10px}
+  .pshots figure{margin:0;display:grid;gap:4px;justify-items:center}
+  .pshots .phone{width:128px;border-radius:20px;padding:5px;box-shadow:0 0 0 1px #3b3e45}
+  .pshots .screen{border-radius:16px}
+  .pshots figcaption{font-size:10px;color:var(--mut)}
+  #duvidas{break-before:page;padding-block:4px 0}
+  #duvidas h2{font-size:26px}
+  .faq details{break-inside:avoid;padding:2px 14px}
+  .faq summary{padding:9px 0}
+  .faq summary::after,.faq details[open] summary::after{content:none}
+  .faq details p{padding-bottom:10px;font-size:12px}
+  footer{padding-block:18px 0}
+}
+</style>
+<script>try{var t=JSON.parse(localStorage.getItem('rev27_tema'));if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <div class="script">Feliz Ano Novo</div>
+      <div class="n2027" aria-label="2027">2027</div>
+      <p class="lead">O app da festa: confirme presença, escolha o que vai levar e veja quanto é a sua parte.</p>
+      <p class="sub">Réveillon em família · 31/12/2026. Funciona no iPhone e no Android, de graça, sem passar pela loja de aplicativos.</p>
+      <div class="linkbox">
+        <span class="url" id="url">https://accoutsssbm.github.io/reveillon-2027/</span>
+        <button class="btn" id="copiar" type="button">Copiar link</button>
+        <a class="btn ghost" href="https://accoutsssbm.github.io/reveillon-2027/" target="_blank" rel="noopener">Abrir o app</a>
+      </div>
+      <div class="qr">
+        <svg viewBox="0 0 39 39" role="img" aria-label="QR Code do link do app" shape-rendering="crispEdges"></svg>
+        <p>Está no computador? Aponte a câmera do celular para o código e abra o app direto.</p>
+      </div>
+      <nav class="jump" aria-label="Partes do folder">
+        <a href="#instalar">Como instalar</a><a href="#convidados">Para quem vai</a><a href="#organizacao">Para quem organiza</a><a href="#duvidas">Dúvidas</a>
+      </nav>
+    </div>
+    <div class="phone" aria-hidden="true"><div class="screen"><img class="shot" src="img/g-inicio.jpg" alt=""></div></div>
+  </div>
+</header>
+
+<main>
+<!-- ================= INSTALAR ================= -->
+<section class="blk" id="instalar">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Passo a passo</span>
+      <h2>Coloque o app na tela do celular</h2>
+      <p class="mut">Ele não está na App Store nem na Play Store. Você instala pelo próprio link e o ícone aparece junto com os outros apps. Escolha o seu celular e toque nos passos.</p>
+    </div>
+    <div class="two">
+      <div>
+        <div class="seg" role="tablist" aria-label="Tipo de celular">
+          <button role="tab" id="t-ios" aria-selected="true" data-os="ios">iPhone</button>
+          <button role="tab" id="t-and" aria-selected="false" data-os="and">Android</button>
+        </div>
+        <ol class="steps" id="steps"></ol>
+        <div class="nav">
+          <button class="btn" id="ant" type="button">Voltar</button>
+          <button class="btn pri" id="prox" type="button">Próximo passo</button>
+          <span class="grow"></span><small id="cont"></small>
+        </div>
+        <p class="note" id="nota"></p>
+      </div>
+      <div class="phone" aria-hidden="true"><div class="notch"></div><div class="screen" id="ill"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CONVIDADOS ================= -->
+<section class="blk" id="convidados">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Para quem vai à festa</span>
+      <h2>Quatro telas, tudo o que o convidado precisa</h2>
+      <p class="mut">Não precisa de senha. As abas ficam embaixo, na barra do app.</p>
+    </div>
+    <div class="seg tabs" role="tablist" aria-label="Telas do convidado" data-tour="g"></div>
+    <div class="two">
+      <div class="tour" id="g-txt"></div>
+      <div class="phone"><div class="notch"></div><div class="screen"><img class="shot" id="g-img" src="img/g-inicio.jpg" alt=""></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ORGANIZAÇÃO ================= -->
+<section class="blk" id="organizacao">
+  <div class="wrap">
+    <div class="head">
+      <span class="eyebrow">Para quem organiza</span>
+      <h2>A tela da organização</h2>
+      <p class="mut">Fica no botão <b>Organização</b>, no topo do app, e pede usuário e senha. Quem organiza faz tudo o que o convidado faz e mais: preços, pagamentos, telefones e cobranças.</p>
+    </div>
+    <div class="seg tabs" role="tablist" aria-label="Telas da organização" data-tour="o"></div>
+    <div class="two">
+      <div class="tour" id="o-txt"></div>
+      <div class="phone"><div class="notch"></div><div class="screen"><img class="shot" id="o-img" src="img/o-login.jpg" alt=""></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DÚVIDAS ================= -->
+<section class="blk" id="duvidas">
+  <div class="wrap">
+    <div class="head"><span class="eyebrow">Dúvidas</span><h2>Perguntas de sempre</h2></div>
+    <div class="faq">
+      <details><summary>Preciso pagar ou criar conta para usar?</summary><p>Não. O app é gratuito e o convidado não precisa de senha. Só quem organiza entra com usuário e senha.</p></details>
+      <details><summary>Abri o link no iPhone e não aparece “Adicionar à Tela de Início”.</summary><p>O link precisa estar aberto no Safari. Se ele abriu dentro de outro app, como Instagram ou Facebook, procure a opção de abrir no navegador, ou copie o link e cole na barra do Safari. Na lista do Compartilhar, role até o fim; se a opção não estiver lá, toque em “Editar Ações” e ative.</p></details>
+      <details><summary>No Android não aparece o botão “Instalar app”.</summary><p>Abra o link no Chrome e toque no menu ⋮ (três pontinhos, no canto de cima). Escolha “Instalar app” ou “Adicionar à tela inicial”.</p></details>
+      <details><summary>Precisa de internet?</summary><p>Sim. As confirmações, o cardápio e os valores ficam guardados num servidor e são iguais para todo mundo, então o app precisa de internet para mostrar e salvar.</p></details>
+      <details><summary>Por que o valor da minha parte mudou?</summary><p>O total da festa é dividido pelos adultos confirmados. Quando alguém confirma ou desiste, ou quando a organização troca um preço estimado pelo preço real, o valor de cada um é recalculado. Quem compra um prato ou material para a festa tem esse gasto descontado da sua parte.</p></details>
+      <details><summary>Troquei de celular e não consigo mais mudar minha confirmação.</summary><p>O celular onde você confirmou guarda uma permissão para alterar a sua participação. Em outro aparelho, peça para alguém da organização fazer a mudança na tela Pessoas.</p></details>
+      <details><summary>Sou da organização e esqueci a senha.</summary><p>Peça para a admin principal: em Painel › Acesso › Organizadores, ela toca em “Nova senha” e define uma senha para você. Depois você troca em “Mudar minha senha”.</p></details>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap">As telas deste folder usam nomes e valores de exemplo. O QR Code do Pix aparece borrado de propósito: o Pix de verdade está só dentro do app.</div></footer>
+
+<script>
+(function(){
+  // QR do link do app (gerado pelo mesmo gerador de QR que o app usa no Pix)
+  var QR = 'M3 3h1v1h-1zM4 3h1v1h-1zM5 3h1v1h-1zM6 3h1v1h-1zM7 3h1v1h-1zM8 3h1v1h-1zM9 3h1v1h-1zM12 3h1v1h-1zM15 3h1v1h-1zM17 3h1v1h-1zM18 3h1v1h-1zM19 3h1v1h-1zM21 3h1v1h-1zM22 3h1v1h-1zM24 3h1v1h-1zM26 3h1v1h-1zM29 3h1v1h-1zM30 3h1v1h-1zM31 3h1v1h-1zM32 3h1v1h-1zM33 3h1v1h-1zM34 3h1v1h-1zM35 3h1v1h-1zM3 4h1v1h-1zM9 4h1v1h-1zM13 4h1v1h-1zM14 4h1v1h-1zM18 4h1v1h-1zM20 4h1v1h-1zM23 4h1v1h-1zM26 4h1v1h-1zM27 4h1v1h-1zM29 4h1v1h-1zM35 4h1v1h-1zM3 5h1v1h-1zM5 5h1v1h-1zM6 5h1v1h-1zM7 5h1v1h-1zM9 5h1v1h-1zM12 5h1v1h-1zM14 5h1v1h-1zM17 5h1v1h-1zM18 5h1v1h-1zM20 5h1v1h-1zM22 5h1v1h-1zM23 5h1v1h-1zM26 5h1v1h-1zM29 5h1v1h-1zM31 5h1v1h-1zM32 5h1v1h-1zM33 5h1v1h-1zM35 5h1v1h-1zM3 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM7 6h1v1h-1zM9 6h1v1h-1zM12 6h1v1h-1zM14 6h1v1h-1zM16 6h1v1h-1zM20 6h1v1h-1zM22 6h1v1h-1zM24 6h1v1h-1zM26 6h1v1h-1zM29 6h1v1h-1zM31 6h1v1h-1zM32 6h1v1h-1zM33 6h1v1h-1zM35 6h1v1h-1zM3 7h1v1h-1zM5 7h1v1h-1zM6 7h1v1h-1zM7 7h1v1h-1zM9 7h1v1h-1zM14 7h1v1h-1zM19 7h1v1h-1zM20 7h1v1h-1zM22 7h1v1h-1zM26 7h1v1h-1zM27 7h1v1h-1zM29 7h1v1h-1zM31 7h1v1h-1zM32 7h1v1h-1zM33 7h1v1h-1zM35 7h1v1h-1zM3 8h1v1h-1zM9 8h1v1h-1zM11 8h1v1h-1zM12 8h1v1h-1zM23 8h1v1h-1zM24 8h1v1h-1zM25 8h1v1h-1zM27 8h1v1h-1zM29 8h1v1h-1zM35 8h1v1h-1zM3 9h1v1h-1zM4 9h1v1h-1zM5 9h1v1h-1zM6 9h1v1h-1zM7 9h1v1h-1zM8 9h1v1h-1zM9 9h1v1h-1zM11 9h1v1h-1zM13 9h1v1h-1zM15 9h1v1h-1zM17 9h1v1h-1zM19 9h1v1h-1zM21 9h1v1h-1zM23 9h1v1h-1zM25 9h1v1h-1zM27 9h1v1h-1zM29 9h1v1h-1zM30 9h1v1h-1zM31 9h1v1h-1zM32 9h1v1h-1zM33 9h1v1h-1zM34 9h1v1h-1zM35 9h1v1h-1zM12 10h1v1h-1zM15 10h1v1h-1zM17 10h1v1h-1zM20 10h1v1h-1zM21 10h1v1h-1zM22 10h1v1h-1zM23 10h1v1h-1zM24 10h1v1h-1zM25 10h1v1h-1zM27 10h1v1h-1zM3 11h1v1h-1zM6 11h1v1h-1zM8 11h1v1h-1zM9 11h1v1h-1zM11 11h1v1h-1zM13 11h1v1h-1zM16 11h1v1h-1zM17 11h1v1h-1zM18 11h1v1h-1zM19 11h1v1h-1zM22 11h1v1h-1zM24 11h1v1h-1zM26 11h1v1h-1zM28 11h1v1h-1zM30 11h1v1h-1zM3 12h1v1h-1zM4 12h1v1h-1zM7 12h1v1h-1zM15 12h1v1h-1zM17 12h1v1h-1zM19 12h1v1h-1zM21 12h1v1h-1zM23 12h1v1h-1zM25 12h1v1h-1zM27 12h1v1h-1zM28 12h1v1h-1zM29 12h1v1h-1zM30 12h1v1h-1zM34 12h1v1h-1zM35 12h1v1h-1zM3 13h1v1h-1zM4 13h1v1h-1zM6 13h1v1h-1zM7 13h1v1h-1zM8 13h1v1h-1zM9 13h1v1h-1zM11 13h1v1h-1zM12 13h1v1h-1zM14 13h1v1h-1zM15 13h1v1h-1zM19 13h1v1h-1zM20 13h1v1h-1zM22 13h1v1h-1zM23 13h1v1h-1zM24 13h1v1h-1zM25 13h1v1h-1zM30 13h1v1h-1zM31 13h1v1h-1zM33 13h1v1h-1zM35 13h1v1h-1zM8 14h1v1h-1zM10 14h1v1h-1zM11 14h1v1h-1zM12 14h1v1h-1zM17 14h1v1h-1zM18 14h1v1h-1zM20 14h1v1h-1zM26 14h1v1h-1zM27 14h1v1h-1zM28 14h1v1h-1zM31 14h1v1h-1zM32 14h1v1h-1zM34 14h1v1h-1zM5 15h1v1h-1zM6 15h1v1h-1zM7 15h1v1h-1zM9 15h1v1h-1zM12 15h1v1h-1zM13 15h1v1h-1zM14 15h1v1h-1zM18 15h1v1h-1zM22 15h1v1h-1zM26 15h1v1h-1zM29 15h1v1h-1zM32 15h1v1h-1zM34 15h1v1h-1zM35 15h1v1h-1zM5 16h1v1h-1zM7 16h1v1h-1zM8 16h1v1h-1zM10 16h1v1h-1zM14 16h1v1h-1zM15 16h1v1h-1zM16 16h1v1h-1zM18 16h1v1h-1zM19 16h1v1h-1zM20 16h1v1h-1zM24 16h1v1h-1zM25 16h1v1h-1zM29 16h1v1h-1zM31 16h1v1h-1zM34 16h1v1h-1zM35 16h1v1h-1zM7 17h1v1h-1zM9 17h1v1h-1zM10 17h1v1h-1zM11 17h1v1h-1zM12 17h1v1h-1zM14 17h1v1h-1zM17 17h1v1h-1zM20 17h1v1h-1zM23 17h1v1h-1zM24 17h1v1h-1zM25 17h1v1h-1zM26 17h1v1h-1zM27 17h1v1h-1zM28 17h1v1h-1zM29 17h1v1h-1zM30 17h1v1h-1zM33 17h1v1h-1zM34 17h1v1h-1zM5 18h1v1h-1zM6 18h1v1h-1zM7 18h1v1h-1zM8 18h1v1h-1zM13 18h1v1h-1zM15 18h1v1h-1zM17 18h1v1h-1zM18 18h1v1h-1zM20 18h1v1h-1zM22 18h1v1h-1zM24 18h1v1h-1zM25 18h1v1h-1zM29 18h1v1h-1zM31 18h1v1h-1zM34 18h1v1h-1zM6 19h1v1h-1zM9 19h1v1h-1zM16 19h1v1h-1zM20 19h1v1h-1zM22 19h1v1h-1zM23 19h1v1h-1zM24 19h1v1h-1zM25 19h1v1h-1zM27 19h1v1h-1zM29 19h1v1h-1zM31 19h1v1h-1zM34 19h1v1h-1zM3 20h1v1h-1zM6 20h1v1h-1zM8 20h1v1h-1zM10 20h1v1h-1zM14 20h1v1h-1zM16 20h1v1h-1zM19 20h1v1h-1zM23 20h1v1h-1zM24 20h1v1h-1zM25 20h1v1h-1zM26 20h1v1h-1zM27 20h1v1h-1zM28 20h1v1h-1zM30 20h1v1h-1zM32 20h1v1h-1zM4 21h1v1h-1zM5 21h1v1h-1zM7 21h1v1h-1zM8 21h1v1h-1zM9 21h1v1h-1zM13 21h1v1h-1zM15 21h1v1h-1zM17 21h1v1h-1zM19 21h1v1h-1zM21 21h1v1h-1zM25 21h1v1h-1zM28 21h1v1h-1zM33 21h1v1h-1zM34 21h1v1h-1zM35 21h1v1h-1zM5 22h1v1h-1zM6 22h1v1h-1zM8 22h1v1h-1zM11 22h1v1h-1zM12 22h1v1h-1zM14 22h1v1h-1zM17 22h1v1h-1zM20 22h1v1h-1zM21 22h1v1h-1zM23 22h1v1h-1zM24 22h1v1h-1zM28 22h1v1h-1zM30 22h1v1h-1zM34 22h1v1h-1zM5 23h1v1h-1zM6 23h1v1h-1zM7 23h1v1h-1zM9 23h1v1h-1zM13 23h1v1h-1zM16 23h1v1h-1zM18 23h1v1h-1zM19 23h1v1h-1zM20 23h1v1h-1zM21 23h1v1h-1zM22 23h1v1h-1zM25 23h1v1h-1zM26 23h1v1h-1zM34 23h1v1h-1zM5 24h1v1h-1zM8 24h1v1h-1zM12 24h1v1h-1zM14 24h1v1h-1zM16 24h1v1h-1zM17 24h1v1h-1zM18 24h1v1h-1zM19 24h1v1h-1zM21 24h1v1h-1zM22 24h1v1h-1zM23 24h1v1h-1zM24 24h1v1h-1zM25 24h1v1h-1zM29 24h1v1h-1zM32 24h1v1h-1zM33 24h1v1h-1zM34 24h1v1h-1zM35 24h1v1h-1zM3 25h1v1h-1zM4 25h1v1h-1zM5 25h1v1h-1zM7 25h1v1h-1zM8 25h1v1h-1zM9 25h1v1h-1zM12 25h1v1h-1zM13 25h1v1h-1zM14 25h1v1h-1zM18 25h1v1h-1zM21 25h1v1h-1zM23 25h1v1h-1zM24 25h1v1h-1zM27 25h1v1h-1zM28 25h1v1h-1zM29 25h1v1h-1zM32 25h1v1h-1zM33 25h1v1h-1zM35 25h1v1h-1zM4 26h1v1h-1zM6 26h1v1h-1zM7 26h1v1h-1zM10 26h1v1h-1zM11 26h1v1h-1zM12 26h1v1h-1zM19 26h1v1h-1zM24 26h1v1h-1zM25 26h1v1h-1zM29 26h1v1h-1zM31 26h1v1h-1zM32 26h1v1h-1zM35 26h1v1h-1zM3 27h1v1h-1zM5 27h1v1h-1zM6 27h1v1h-1zM9 27h1v1h-1zM14 27h1v1h-1zM15 27h1v1h-1zM17 27h1v1h-1zM18 27h1v1h-1zM19 27h1v1h-1zM20 27h1v1h-1zM22 27h1v1h-1zM23 27h1v1h-1zM24 27h1v1h-1zM27 27h1v1h-1zM28 27h1v1h-1zM29 27h1v1h-1zM30 27h1v1h-1zM31 27h1v1h-1zM34 27h1v1h-1zM11 28h1v1h-1zM16 28h1v1h-1zM19 28h1v1h-1zM21 28h1v1h-1zM22 28h1v1h-1zM23 28h1v1h-1zM26 28h1v1h-1zM27 28h1v1h-1zM31 28h1v1h-1zM32 28h1v1h-1zM35 28h1v1h-1zM3 29h1v1h-1zM4 29h1v1h-1zM5 29h1v1h-1zM6 29h1v1h-1zM7 29h1v1h-1zM8 29h1v1h-1zM9 29h1v1h-1zM12 29h1v1h-1zM15 29h1v1h-1zM16 29h1v1h-1zM19 29h1v1h-1zM24 29h1v1h-1zM27 29h1v1h-1zM29 29h1v1h-1zM31 29h1v1h-1zM32 29h1v1h-1zM33 29h1v1h-1zM34 29h1v1h-1zM3 30h1v1h-1zM9 30h1v1h-1zM11 30h1v1h-1zM12 30h1v1h-1zM13 30h1v1h-1zM16 30h1v1h-1zM27 30h1v1h-1zM31 30h1v1h-1zM34 30h1v1h-1zM35 30h1v1h-1zM3 31h1v1h-1zM5 31h1v1h-1zM6 31h1v1h-1zM7 31h1v1h-1zM9 31h1v1h-1zM12 31h1v1h-1zM13 31h1v1h-1zM15 31h1v1h-1zM19 31h1v1h-1zM22 31h1v1h-1zM25 31h1v1h-1zM27 31h1v1h-1zM28 31h1v1h-1zM29 31h1v1h-1zM30 31h1v1h-1zM31 31h1v1h-1zM32 31h1v1h-1zM34 31h1v1h-1zM35 31h1v1h-1zM3 32h1v1h-1zM5 32h1v1h-1zM6 32h1v1h-1zM7 32h1v1h-1zM9 32h1v1h-1zM11 32h1v1h-1zM12 32h1v1h-1zM13 32h1v1h-1zM14 32h1v1h-1zM17 32h1v1h-1zM18 32h1v1h-1zM22 32h1v1h-1zM23 32h1v1h-1zM24 32h1v1h-1zM26 32h1v1h-1zM27 32h1v1h-1zM29 32h1v1h-1zM31 32h1v1h-1zM32 32h1v1h-1zM33 32h1v1h-1zM34 32h1v1h-1zM3 33h1v1h-1zM5 33h1v1h-1zM6 33h1v1h-1zM7 33h1v1h-1zM9 33h1v1h-1zM13 33h1v1h-1zM16 33h1v1h-1zM17 33h1v1h-1zM24 33h1v1h-1zM25 33h1v1h-1zM27 33h1v1h-1zM31 33h1v1h-1zM33 33h1v1h-1zM35 33h1v1h-1zM3 34h1v1h-1zM9 34h1v1h-1zM12 34h1v1h-1zM13 34h1v1h-1zM14 34h1v1h-1zM15 34h1v1h-1zM16 34h1v1h-1zM18 34h1v1h-1zM19 34h1v1h-1zM20 34h1v1h-1zM21 34h1v1h-1zM24 34h1v1h-1zM27 34h1v1h-1zM3 35h1v1h-1zM4 35h1v1h-1zM5 35h1v1h-1zM6 35h1v1h-1zM7 35h1v1h-1zM8 35h1v1h-1zM9 35h1v1h-1zM11 35h1v1h-1zM12 35h1v1h-1zM14 35h1v1h-1zM19 35h1v1h-1zM24 35h1v1h-1zM26 35h1v1h-1zM27 35h1v1h-1zM29 35h1v1h-1zM31 35h1v1h-1zM32 35h1v1h-1zM34 35h1v1h-1z';
+  document.querySelector('.qr svg').innerHTML = '<rect width="39" height="39" fill="#fff"/><path d="' + QR + '" fill="#000"/>';
+
+  // copiar link
+  var cop = document.getElementById('copiar'), url = document.getElementById('url');
+  cop.addEventListener('click', function(){
+    var t = url.textContent.trim();
+    var ok = function(){ cop.textContent = 'Link copiado'; setTimeout(function(){ cop.textContent = 'Copiar link'; }, 2200); };
+    var sel = function(){ var r = document.createRange(); r.selectNodeContents(url); var s = getSelection(); s.removeAllRanges(); s.addRange(r); cop.textContent = 'Link selecionado: copie'; };
+    try { navigator.clipboard.writeText(t).then(ok, sel); } catch(e){ sel(); }
+  });
+
+  /* ---------- desenhos do passo a passo ---------- */
+  var ICO = 'img/icone.png';
+  var share = '<svg viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M5 11v9h14v-9"/></svg>';
+  var dots = '<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="19" cy="12" r="1.2"/></svg>';
+  var back = '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
+  var fwd = '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>';
+  var book = '<svg viewBox="0 0 24 24"><path d="M4 5h6a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H4zM20 5h-6a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h6z"/></svg>';
+  var tabsI = '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="12" height="12" rx="2"/><path d="M8 20h10a2 2 0 0 0 2-2V8"/></svg>';
+  var kebab = '<svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="19" r="1.2"/></svg>';
+  var appsHome = function(){
+    var nomes = ['Câmera','Fotos','Mensagens','WhatsApp','Agenda','Relógio','Banco','Mapas','Música','Notas'];
+    return '<div class="home">' + nomes.map(function(n){ return '<div><i></i>' + n + '</div>'; }).join('') +
+      '<div><img src="' + ICO + '" alt="">Réveillon 2027<span class="hl"></span></div></div>';
+  };
+  var safari = function(hlShare){
+    return '<div class="site" style="top:0;bottom:13%"></div><div class="sbar"><div class="addr">accoutsssbm.github.io</div>' +
+      '<div class="icons"><span>' + back + '</span><span>' + fwd + '</span><span style="position:relative">' + share + (hlShare ? '<span class="hl" style="inset:-7px"></span>' : '') + '</span><span>' + book + '</span><span>' + tabsI + '</span></div></div>';
+  };
+  var chrome = function(extra){
+    return '<div class="cbar"><div class="addr">accoutsssbm.github.io/reveillon-2027</div><span style="position:relative">' + kebab + '</span></div>' +
+      '<div class="site" style="top:11%;bottom:0">' + (extra || '') + '</div>';
+  };
+
+  var OS = {
+    ios: {
+      nota: '<b>No app tem ajuda também:</b> no iPhone, o botão “Instalar app” no topo do site mostra este mesmo passo a passo.',
+      passos: [
+        { t: 'Abra o link no Safari', d: 'Toque no link que a organização mandou no grupo. Se ele abrir dentro de outro app, copie o link e cole na barra do Safari.',
+          h: '<div class="chat"><div class="b"><div class="who">Organização</div>Confirmem presença e escolham o que levar 🎉<br><a>https://accoutsssbm.github.io/reveillon-2027/</a><span class="hl" style="inset:-4px"></span></div></div>' },
+        { t: 'Toque em Compartilhar', d: 'É o quadrado com a seta para cima, na barra do Safari. Em iPhones com iOS mais novo, ele fica dentro do botão ••• ao lado do endereço.',
+          h: safari(true) },
+        { t: 'Escolha “Adicionar à Tela de Início”', d: 'Role a lista para baixo até achar a opção. Se ela não aparecer, toque em “Editar Ações” no fim da lista e ative.',
+          h: safari(false) + '<div class="dim"></div><div class="sheet"><div class="grab"></div><div class="row">Copiar<i>⧉</i></div><div class="row">Adicionar aos Favoritos<i>☆</i></div><div class="row">Adicionar à Tela de Início<i>⊞</i><span class="hl" style="inset:-3px"></span></div><div class="row">Buscar na Página<i>⌕</i></div><div class="row" style="justify-content:center;color:#0a64d8">Editar Ações…</div></div>' },
+        { t: 'Toque em “Adicionar”', d: 'O nome “Réveillon 2027” já vem preenchido. Confirme no canto de cima, à direita.',
+          h: '<div class="modal"><div class="top"><a>Cancelar</a><b>Adicionar à Tela de Início</b><a style="font-weight:600;position:relative">Adicionar<span class="hl" style="inset:-6px -8px"></span></a></div><div class="card"><img src="' + ICO + '" alt=""><div><b>Réveillon 2027</b><div style="color:#666;font-size:11px">accoutsssbm.github.io</div></div></div><p style="font-size:11px;color:#666;padding:0 4px">Um ícone será adicionado à Tela de Início para que você possa acessar este site rapidamente.</p></div>' },
+        { t: 'Pronto: abra pelo ícone', d: 'O app abre em tela cheia, sem a barra do navegador. Use sempre o ícone daqui para frente.',
+          h: appsHome() }
+      ]
+    },
+    and: {
+      nota: '<b>Não apareceu o botão?</b> Toque no menu ⋮ do Chrome, no canto de cima, e escolha “Instalar app” ou “Adicionar à tela inicial”.',
+      passos: [
+        { t: 'Abra o link no Chrome', d: 'Toque no link que a organização mandou no grupo. Se abrir em outro navegador, copie o link e cole no Chrome.',
+          h: '<div class="chat"><div class="b"><div class="who">Organização</div>Confirmem presença e escolham o que levar 🎉<br><a>https://accoutsssbm.github.io/reveillon-2027/</a><span class="hl" style="inset:-4px"></span></div></div>' },
+        { t: 'Toque em “Instalar app”', d: 'O botão preto aparece no topo do site, ao lado de “Organização”.',
+          h: chrome('<span class="hl" style="left:28%;top:1.2%;width:26%;height:5.4%"></span>') },
+        { t: 'Confirme em “Instalar”', d: 'O Android pergunta se quer instalar. Toque em “Instalar”.',
+          h: chrome('') + '<div class="dim"></div><div class="dlg"><b style="font-size:15px">Instalar app?</b><div class="app"><img src="' + ICO + '" alt=""><div><b>Réveillon 2027</b><div style="color:#666;font-size:11px">accoutsssbm.github.io</div></div></div><div class="acts"><span>Cancelar</span><span>Instalar<span class="hl" style="inset:-2px -4px"></span></span></div></div>' },
+        { t: 'Pronto: abra pelo ícone', d: 'O ícone aparece na tela inicial ou na gaveta de apps. O app abre em tela cheia.',
+          h: appsHome() }
+      ]
+    }
+  };
+
+  var os = /android/i.test(navigator.userAgent) ? 'and' : 'ios', i = 0;
+  var $steps = document.getElementById('steps'), $ill = document.getElementById('ill');
+  function pinta(){
+    var P = OS[os].passos;
+    $steps.innerHTML = P.map(function(p, k){
+      return '<li><button type="button" data-k="' + k + '"' + (k === i ? ' aria-current="step"' : '') + '><div><b>' + p.t + '</b><span>' + p.d + '</span></div></button></li>';
+    }).join('');
+    $ill.innerHTML = '<div class="ill">' + P[i].h + '</div>';
+    document.getElementById('cont').textContent = 'Passo ' + (i + 1) + ' de ' + P.length;
+    document.getElementById('ant').disabled = i === 0;
+    document.getElementById('prox').textContent = i === P.length - 1 ? 'Ver de novo' : 'Próximo passo';
+    document.getElementById('nota').innerHTML = OS[os].nota;
+    document.querySelectorAll('[data-os]').forEach(function(b){ b.setAttribute('aria-selected', b.dataset.os === os); });
+  }
+  $steps.addEventListener('click', function(e){ var b = e.target.closest('button'); if (b){ i = +b.dataset.k; pinta(); } });
+  document.getElementById('prox').addEventListener('click', function(){ i = (i + 1) % OS[os].passos.length; pinta(); });
+  document.getElementById('ant').addEventListener('click', function(){ if (i) { i--; pinta(); } });
+  document.querySelectorAll('[data-os]').forEach(function(b){ b.addEventListener('click', function(){ os = b.dataset.os; i = 0; pinta(); }); });
+  pinta();
+
+  /* ---------- tour pelas telas ---------- */
+  var TOUR = {
+    g: [
+      { aba: 'Início', imgs: [['g-inicio', 'Topo'], ['g-inicio-2', 'Sua participação']], t: 'Início',
+        it: ['Mostra o valor por adulto, quantos já confirmaram e o total da festa, atualizados na hora.',
+             'Em “Sua participação” você muda a resposta (Vou, Talvez, Não vou), marca se vai dormir e escolhe se a família paga numa cobrança só ou cada um a sua.',
+             'Embaixo tem a lista de confirmados e um resumo de como a conta é dividida.'] },
+      { aba: 'Confirmar', imgs: [['g-confirmar', 'Formulário']], t: 'Confirmar presença',
+        it: ['Coloque o seu nome e o de quem vem com você. Use “+ Outra pessoa da família” para cada um.',
+             'Marque quem é criança e quem vai dormir e tomar café da manhã.',
+             'O WhatsApp serve para a organização mandar a sua parte do valor. Só os organizadores veem.',
+             'Já tem a lista pronta? “Tenho uma lista pronta” lê vários nomes de uma vez.'] },
+      { aba: 'Cardápio', imgs: [['g-cardapio', 'Pratos'], ['g-cardapio-2', 'Mais abaixo']], t: 'Cardápio e quem leva',
+        it: ['Toque em “Eu levo” no prato ou item que você vai trazer. O nome aparece para todo mundo.',
+             'Mudou de ideia? “Desistir” libera o prato para outra pessoa.',
+             'Quer levar algo que não está na lista? “Cadastrar meu prato” aceita a receita em texto.',
+             'O que você gastar comprando ingredientes é descontado da sua parte.'] },
+      { aba: 'Pagamento', imgs: [['g-pagar', 'Sua parte']], t: 'Pagamento',
+        it: ['Mostra o valor por adulto e a parte da sua família, já descontando o que vocês gastaram e o que já pagaram.',
+             'Pague pelo QR Code do Pix ou toque em “Copiar Pix copia e cola” e cole no app do banco.',
+             'Depois toque em “Avisar que paguei”: abre o WhatsApp da organização com a mensagem pronta.'] }
+    ],
+    o: [
+      { aba: 'Entrar', imgs: [['o-login', 'Login']], t: 'Entrar na organização',
+        it: ['Toque em “Organização” no topo e entre com o usuário e a senha que a admin passou.',
+             'O ícone de olho mostra a senha enquanto você digita, para conferir se está certa.',
+             '“Esqueci a senha” só funciona para quem foi cadastrado com e-mail de verdade. Quem entra só com o nome pede uma senha nova para a admin.'] },
+      { aba: 'Painel', imgs: [['o-painel', 'Resumo'], ['o-acesso', 'Mais abaixo']], t: 'Painel',
+        it: ['Resumo da festa e avisos do que falta: pratos sem responsável, preços ainda estimados, gente sobrecarregada.',
+             '“Link para os convidados” tem o endereço para mandar no grupo.',
+             '“Publicar no grupo” monta o texto com resumo, quem leva o quê e quem já pagou, pronto para o WhatsApp.',
+             'Em “Dados da festa e regras” ficam o local, a chave Pix e quanto a criança come e paga.'] },
+      { aba: 'Pessoas', imgs: [['o-pessoas', 'Lista'], ['o-familia', 'Adicionar família']], t: 'Pessoas',
+        it: ['“Adicionar pessoa ou família” cadastra várias pessoas de uma vez, numa família nova ou numa que já existe.',
+             '“Importar lista” lê nomes colados ou um arquivo (.txt, .csv, planilha ou contatos .vcf).',
+             'Em cada pessoa: resposta, WhatsApp, adulto ou criança, de qual família é e se vai dormir.'] },
+      { aba: 'Comida', imgs: [['o-comida', 'Ceia']], t: 'Comida',
+        it: ['Ceia, café da manhã e a lista de compras com preços.',
+             'Marque o que entra no cardápio e escolha o responsável de cada prato.',
+             'O app multiplica as receitas pelo número de confirmados e soma a lista de compras em embalagens fechadas.',
+             'A aba Festa faz o mesmo com decoração, bebidas, descartáveis e aluguel.'] },
+      { aba: 'Dinheiro', imgs: [['o-dinheiro', 'Cobranças']], t: 'Dinheiro',
+        it: ['Quanto falta receber, quanto já entrou e quanto devolver para quem gastou mais que a cota.',
+             'Cada família tem o seu saldo, com “Cobrar no WhatsApp” e o botão para marcar como pago.',
+             'Dá para cobrar a família junto, no nome do responsável, ou cada adulto separado.'] },
+      { aba: 'Acesso', imgs: [['o-acesso', 'Acesso'], ['o-organizadores', 'Organizadores'], ['o-minhasenha', 'Mudar senha']], t: 'Acesso e senhas',
+        it: ['Todo organizador tem “Mudar minha senha”: digita a senha atual e a nova duas vezes.',
+             'A admin principal também vê “Organizadores”: cadastra quem organiza, define uma senha nova para quem esqueceu e remove quem não participa mais.',
+             'A admin principal não pode ser removida.'] }
+    ]
+  };
+  ['g', 'o'].forEach(function(k){
+    var bar = document.querySelector('[data-tour="' + k + '"]'), txt = document.getElementById(k + '-txt'), img = document.getElementById(k + '-img');
+    var cur = 0;
+    function troca(src){ img.style.opacity = 0; setTimeout(function(){ img.src = 'img/' + src + '.jpg'; img.onload = function(){ img.style.opacity = 1; }; }, 180); }
+    function abre(n){
+      cur = n; var s = TOUR[k][n];
+      bar.querySelectorAll('button').forEach(function(b, j){ b.setAttribute('aria-selected', j === n); });
+      txt.innerHTML = '<span class="who-tag">' + (k === 'g' ? 'Tela do convidado' : 'Tela da organização') + '</span><h3>' + s.t + '</h3><ul>' + s.it.map(function(x){ return '<li><span>' + x + '</span></li>'; }).join('') + '</ul>' +
+        (s.imgs.length > 1 ? '<div class="thumbs" role="group" aria-label="Ver outra parte da tela">' + s.imgs.map(function(m, j){ return '<button type="button" data-src="' + m[0] + '" aria-pressed="' + (j === 0) + '">' + m[1] + '</button>'; }).join('') + '</div>' : '');
+      img.alt = 'Tela ' + s.t + ' do app';
+      troca(s.imgs[0][0]);
+    }
+    bar.innerHTML = TOUR[k].map(function(s, j){ return '<button role="tab" type="button" aria-selected="' + (j === 0) + '">' + s.aba + '</button>'; }).join('');
+    bar.addEventListener('click', function(e){ var b = e.target.closest('button'); if (b) abre([].indexOf.call(bar.children, b)); });
+    txt.addEventListener('click', function(e){ var b = e.target.closest('[data-src]'); if (!b) return; txt.querySelectorAll('[data-src]').forEach(function(x){ x.setAttribute('aria-pressed', x === b); }); troca(b.dataset.src); });
+    abre(0);
+  });
+
+  /* ---------- versão para imprimir / PDF ---------- */
+  var h = '';
+  [['ios', 'No iPhone (Safari)'], ['and', 'No Android (Chrome)']].forEach(function(x, n){
+    var o = OS[x[0]];
+    h += '<section class="pv"><div class="wrap">' +
+      (n === 0 ? '<span class="eyebrow">Passo a passo</span><h2>Coloque o app na tela do celular</h2><p class="mut">Ele não está na App Store nem na Play Store. Você instala pelo próprio link e o ícone aparece junto com os outros apps. O destaque amarelo mostra onde tocar.</p>' : '') +
+      '<h3 class="ph">' + x[1] + '</h3><div class="pgrid ' + x[0] + '">' + o.passos.map(function(p, k){
+        return '<div class="pstep"><div class="phone"><div class="notch"></div><div class="screen"><div class="ill">' + p.h + '</div></div></div><p><b>' + (k + 1) + '. ' + p.t + '</b></p><p class="mut">' + p.d + '</p></div>';
+      }).join('') + '</div><p class="note">' + o.nota + '</p></div></section>';
+  });
+  [['g', 'Para quem vai à festa', 'Quatro telas, tudo o que o convidado precisa', 'Não precisa de senha. As abas ficam embaixo, na barra do app.'],
+   ['o', 'Para quem organiza', 'A tela da organização', 'Fica no botão Organização, no topo do app, e pede usuário e senha. Quem organiza faz tudo o que o convidado faz e mais: preços, pagamentos, telefones e cobranças.']].forEach(function(x){
+    h += '<section class="pv"><div class="wrap"><span class="eyebrow">' + x[1] + '</span><h2>' + x[2] + '</h2><p class="mut">' + x[3] + '</p>' +
+      TOUR[x[0]].map(function(s){
+        return '<div class="ptour"><div class="tour"><h3>' + s.t + '</h3><ul>' + s.it.map(function(t){ return '<li><span>' + t + '</span></li>'; }).join('') + '</ul></div><div class="pshots">' +
+          s.imgs.map(function(m){ return '<figure><div class="phone"><div class="screen"><img class="shot" src="img/' + m[0] + '.jpg" alt="Tela ' + s.t + '"></div></div>' + (s.imgs.length > 1 ? '<figcaption>' + m[1] + '</figcaption>' : '') + '</figure>'; }).join('') +
+          '</div></div>';
+      }).join('') + '</div></section>';
+  });
+  var pv = document.createElement('div'); pv.className = 'print-only'; pv.innerHTML = h;
+  document.getElementById('duvidas').before(pv);
+  addEventListener('beforeprint', function(){ document.querySelectorAll('.faq details').forEach(function(d){ d.open = true; }); });
+})();
+</script>
+
+</html>

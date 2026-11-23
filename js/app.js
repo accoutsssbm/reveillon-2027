@@ -17,6 +17,7 @@ const tokenOf = id => (store.get('rev27_meus', []).find(m => m.id === id) || {})
 const nomeDe = id => (S.pessoas.find(p => p.id === id) || {}).nome || '';
 const lim = () => +S.config.limite || 3;
 const guestUrl = () => location.href.split('#')[0];
+const folderUrl = () => new URL('folder/', guestUrl()).href;
 
 const ICON = {
   home: 'M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
@@ -157,6 +158,7 @@ function vInicio() {
     <section class="card"><h3>Como funciona</h3>
       <p>Todo o custo da festa (comida, bebida, decoração, descartáveis e aluguel) é somado e dividido igualmente entre os adultos confirmados${+S.config.fcota > 0 ? `; criança paga ${fq(S.config.fcota * 100)}% do valor` : '; criança não paga'}.</p>
       <p>Quem leva um prato compra os ingredientes e esse gasto é descontado da sua parte.</p>
+      <a class="btn" href="folder/">Como instalar e usar o app</a>
       ${semResp ? `<a class="btn" href="#cardapio">${semResp} prato(s) ainda sem ninguém, quer levar?</a>` : ''}</section>
   </div>`;
 }
@@ -338,7 +340,9 @@ function vPainel() {
   <section class="card"><h3>Para onde vai o dinheiro</h3><div class="bars">${Object.entries(t).map(([k, v]) => `<div class="b"><span>${nomes[k]}</span><span class="tr"><i style="width:${v / mx * 100}%"></i></span><span class="r money">${brl(v)}</span></div>`).join('')}
     <div class="b tot"><b>Total</b><b class="r money">${brl(C.total)}</b></div></div></section>
   <section class="card"><h3>Link para os convidados</h3><p class="mut">Mande no grupo. Quem abre vê a festa, confirma presença e escolhe o que levar. Não consegue mexer em preços nem pagamentos.</p>
-    <div class="row"><input readonly value="${esc(guestUrl())}" aria-label="Link"><button class="btn" data-act="copy" data-v="${esc(guestUrl())}">Copiar</button></div></section>
+    <div class="row"><input readonly value="${esc(guestUrl())}" aria-label="Link"><button class="btn" data-act="copy" data-v="${esc(guestUrl())}">Copiar</button></div>
+    <p class="mut">Folder com o passo a passo para instalar e usar o app:</p>
+    <div class="row"><input readonly value="${esc(folderUrl())}" aria-label="Link do folder"><button class="btn" data-act="copy" data-v="${esc(folderUrl())}">Copiar</button><a class="btn" href="folder/">Abrir</a></div></section>
   </div>
   <section class="card"><h3>Acesso</h3><p class="mut">${ui.admin ? 'Você é a admin principal: cadastra quem organiza a festa. Cada um troca a própria senha aqui.' : 'Troque a senha que você recebeu por uma sua.'}</p>
     <div class="row"><button class="btn" data-act="senha-open">Mudar minha senha</button>${ui.admin ? '<button class="btn" data-act="orgs-open">Organizadores</button>' : ''}</div></section>
@@ -933,6 +937,7 @@ function initInstalar() {
     openDlg(`<h2>Instalar no iPhone</h2>
     <p>1. Abra este endereço no <b>Safari</b>.<br>2. Toque em <b>Compartilhar</b> (o quadrado com a seta para cima).<br>3. Escolha <b>Adicionar à Tela de Início</b> e toque em <b>Adicionar</b>.</p>
     <p class="mut">O ícone do Réveillon 2027 aparece na tela do celular e abre como app, sem a barra do navegador.</p>
+    <p><a href="folder/#instalar">Ver o passo a passo com imagens</a></p>
     <div class="row"><button class="btn pri" data-act="dlg-close">Entendi</button></div>`);
   });
 }
