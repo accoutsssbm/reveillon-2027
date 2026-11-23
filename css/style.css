@@ -113,6 +113,9 @@ main{padding:20px clamp(14px,3vw,36px) 40px;max-width:1240px;width:100%}
 .blk{margin:22px 0 10px}.blk>.row{margin-bottom:10px}
 .cta{flex-direction:row;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px}
 .login{max-width:440px;margin:30px auto}
+.pw{position:relative;display:block}.pw input{padding-right:48px}
+.pw .btn.icon{position:absolute;right:0;top:0;height:100%;min-height:0;border:0;color:var(--mut)}
+.pw .btn.icon[aria-pressed=false] .x{display:none}
 details>summary{cursor:pointer;font-weight:600;list-style:none;padding:6px 0;font-size:15px}
 details>summary::-webkit-details-marker{display:none}
 details>summary::before{content:'+ '}details[open]>summary::before{content:'– '}
