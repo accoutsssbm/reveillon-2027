@@ -292,12 +292,24 @@ async function openOrganizadores() {
   try { lista = await db.rpc('listar_organizadores'); } catch (e) { return toast(e.message); }
   openDlg(`<h2>Organizadores</h2>
   <p class="mut">Quem está aqui entra na tela da Organização e mexe em tudo, menos nesta lista.</p>
-  <div>${lista.map(o => `<div class="pick-row"><span class="grow nm">${esc(o.email)}</span>${o.admin ? tag('admin', 'ok') : ''}</div>`).join('')}</div>
+  <div>${lista.map(o => `<div class="pick-row"><span class="grow nm">${esc(o.email)}</span>${o.admin ? tag('admin', 'ok')
+    : `<span class="row"><button type="button" class="btn sm" data-act="org-senha" data-v="${esc(o.email)}">Nova senha</button><button type="button" class="x" data-act="org-del" data-v="${esc(o.email)}">Remover</button></span>`}</div>`).join('')}</div>
   <h3 class="mt">Cadastrar organizador</h3>
   <form id="f-org"><div class="f2"><label class="l">Usuário${db.orgDomain ? ` (vira usuário@${esc(db.orgDomain)})` : ' (e-mail)'}<input name="u" autocomplete="off" required></label>
   <label class="l">Senha inicial (mínimo 6)${pwField('s', 'new-password')}</label></div>
   <p class="mut">Passe o usuário e a senha para a pessoa. Depois ela troca em Painel › Acesso › Mudar minha senha.</p>
   <div class="row"><button class="btn pri">Cadastrar</button><button type="button" class="btn ghost" data-act="dlg-close">Fechar</button></div></form>`);
+}
+function openSenhaOrg(email) {
+  openDlg(`<h2>Nova senha</h2><p>Para <b>${esc(email)}</b>. Passe a senha nova para a pessoa; ela pode trocar depois em Painel › Acesso.</p>
+  <form id="f-orgsenha"><input type="hidden" name="email" value="${esc(email)}">
+  <label class="l">Senha nova (mínimo 6 caracteres)${pwField('s', 'new-password')}</label>
+  <div class="row"><button class="btn pri">Salvar senha</button><button type="button" class="btn ghost" data-act="orgs-open">Voltar</button></div></form>`);
+}
+async function removerOrg(email) {
+  if (!confirm(`Remover ${email}? A pessoa perde o acesso à Organização. Não dá para desfazer; para voltar, cadastre de novo.`)) return;
+  try { await db.rpc('remover_organizador', { p_email: email }); toast(`${email} removido.`); openOrganizadores(); }
+  catch (err) { toast(err.message); }
 }
 function openNovaSenha() {
   openDlg(`<h2>Criar senha nova</h2>
@@ -789,6 +801,8 @@ function bind() {
       case 'pw-forgot': openEsqueci(); break;
       case 'senha-open': openMinhaSenha(); break;
       case 'orgs-open': openOrganizadores(); break;
+      case 'org-senha': openSenhaOrg(b.dataset.v); break;
+      case 'org-del': removerOrg(b.dataset.v); break;
       // convidado
       case 'g-st': guestUpdate(id, { p_status: b.dataset.v }); break;
       case 'g-pick': case 'g-drop': {
@@ -848,6 +862,11 @@ function bind() {
     if (f.id === 'f-minhasenha') {
       if (v.s !== v.s2) return toast('As duas senhas novas não são iguais.');
       try { await db.trocarSenha(v.a, v.s); closeDlg(); toast('Senha alterada.'); } catch (err) { toast(err.message); }
+      return;
+    }
+    if (f.id === 'f-orgsenha') {
+      try { await db.rpc('redefinir_senha_organizador', { p_email: v.email, p_senha: v.s }); toast(`Senha de ${v.email} alterada.`); openOrganizadores(); }
+      catch (err) { toast(err.message); }
       return;
     }
     if (f.id === 'f-org') {

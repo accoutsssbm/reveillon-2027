@@ -86,7 +86,11 @@ A admin principal cadastra os outros organizadores pelo próprio app, sem entrar
 3. No app: **Painel → Acesso → Organizadores** → digite o usuário (ex.: `maria`) e uma senha inicial → **Cadastrar**. Passe usuário e senha para a pessoa.
 4. Cada organizador troca a própria senha em **Painel → Acesso → Mudar minha senha**. É preciso digitar a senha atual.
 
-Só a admin vê a lista e cadastra organizadores. Os demais organizadores veem apenas “Mudar minha senha”.
+5. Na mesma lista, a admin tem **Nova senha** (para quem esqueceu: você define uma e passa para a pessoa) e **Remover** (tira o acesso; não dá para desfazer, só cadastrar de novo). A admin principal não pode ser removida.
+
+Só a admin vê a lista, cadastra, redefine senha e remove organizadores. Os demais organizadores veem apenas “Mudar minha senha”.
+
+Se você já tinha rodado o `03_organizadores.sql`, rode a versão nova de novo (com o seu e-mail na linha marcada) para ganhar Nova senha e Remover.
 
 ## Como as contas funcionam
 

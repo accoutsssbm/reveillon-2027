@@ -48,6 +48,33 @@ begin
   values (uid, uid::text, jsonb_build_object('sub', uid::text, 'email', em, 'email_verified', true), 'email', now(), now(), now());
 end $$;
 
+create or replace function public.redefinir_senha_organizador(p_email text, p_senha text)
+returns void language plpgsql security definer set search_path = public as $$
+declare em text := lower(trim(p_email));
+begin
+  if not public.sou_admin() then raise exception 'Só a admin principal pode redefinir senhas.'; end if;
+  if length(coalesce(p_senha, '')) < 6 then raise exception 'Senha fraca: use pelo menos 6 caracteres.'; end if;
+  update auth.users set encrypted_password = extensions.crypt(p_senha, extensions.gen_salt('bf')), updated_at = now()
+  where lower(email) = em;
+  if not found then raise exception 'Organizador não encontrado.'; end if;
+end $$;
+
+create or replace function public.remover_organizador(p_email text)
+returns void language plpgsql security definer set search_path = public as $$
+declare em text := lower(trim(p_email)); alvo uuid;
+begin
+  if not public.sou_admin() then raise exception 'Só a admin principal pode remover organizadores.'; end if;
+  select id into alvo from auth.users where lower(email) = em;
+  if alvo is null then raise exception 'Organizador não encontrado.'; end if;
+  if exists (select 1 from public.org_admins where user_id = alvo) then raise exception 'A admin principal não pode ser removida.'; end if;
+  delete from auth.users where id = alvo;  -- leva junto o login e as sessões dele
+end $$;
+
+revoke all on function public.redefinir_senha_organizador(text, text) from public, anon;
+revoke all on function public.remover_organizador(text) from public, anon;
+grant execute on function public.redefinir_senha_organizador(text, text) to authenticated;
+grant execute on function public.remover_organizador(text) to authenticated;
+
 revoke all on function public.sou_admin() from public, anon;
 revoke all on function public.listar_organizadores() from public, anon;
 revoke all on function public.criar_organizador(text, text) from public, anon;
