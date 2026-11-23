@@ -44,6 +44,7 @@ async function reload(tables = db.TABLES) {
     const res = await Promise.all(tables.map(t => db.load(t)));
     tables.forEach((t, i) => { if (t === 'config') S.config = res[i][0] || {}; else S[t] = res[i]; });
     if (auth) S.contatos = Object.fromEntries((await db.loadContatos()).map(c => [c.pessoa_id, c.telefone]));
+    if (!auth) ui.admin = null; else if (ui.admin == null) ui.admin = await db.souAdmin();
     loaded = true; banner('');
   } catch (e) { banner(e.message); }
   schedule();
@@ -279,6 +280,25 @@ function openEsqueci() {
   <p class="mut">Se você entra só com o nome (sem e-mail), não há para onde mandar o link: peça a quem administra a festa para trocar sua senha no Supabase.</p>
   <div class="row"><button class="btn pri">Enviar link</button><button type="button" class="btn ghost" data-act="dlg-close">Cancelar</button></div></form>`);
 }
+function openMinhaSenha() {
+  openDlg(`<h2>Mudar minha senha</h2>
+  <form id="f-minhasenha"><label class="l">Senha atual${pwField('a', 'current-password')}</label>
+  <label class="l">Senha nova (mínimo 6 caracteres)${pwField('s', 'new-password')}</label>
+  <label class="l">Repita a senha nova${pwField('s2', 'new-password')}</label>
+  <div class="row"><button class="btn pri">Salvar senha</button><button type="button" class="btn ghost" data-act="dlg-close">Cancelar</button></div></form>`);
+}
+async function openOrganizadores() {
+  let lista = [];
+  try { lista = await db.rpc('listar_organizadores'); } catch (e) { return toast(e.message); }
+  openDlg(`<h2>Organizadores</h2>
+  <p class="mut">Quem está aqui entra na tela da Organização e mexe em tudo, menos nesta lista.</p>
+  <div>${lista.map(o => `<div class="pick-row"><span class="grow nm">${esc(o.email)}</span>${o.admin ? tag('admin', 'ok') : ''}</div>`).join('')}</div>
+  <h3 class="mt">Cadastrar organizador</h3>
+  <form id="f-org"><div class="f2"><label class="l">Usuário${db.orgDomain ? ` (vira usuário@${esc(db.orgDomain)})` : ' (e-mail)'}<input name="u" autocomplete="off" required></label>
+  <label class="l">Senha inicial (mínimo 6)${pwField('s', 'new-password')}</label></div>
+  <p class="mut">Passe o usuário e a senha para a pessoa. Depois ela troca em Painel › Acesso › Mudar minha senha.</p>
+  <div class="row"><button class="btn pri">Cadastrar</button><button type="button" class="btn ghost" data-act="dlg-close">Fechar</button></div></form>`);
+}
 function openNovaSenha() {
   openDlg(`<h2>Criar senha nova</h2>
   <form id="f-novasenha"><label class="l">Senha nova (mínimo 6 caracteres)${pwField('s', 'new-password')}</label>
@@ -308,6 +328,8 @@ function vPainel() {
   <section class="card"><h3>Link para os convidados</h3><p class="mut">Mande no grupo. Quem abre vê a festa, confirma presença e escolhe o que levar. Não consegue mexer em preços nem pagamentos.</p>
     <div class="row"><input readonly value="${esc(guestUrl())}" aria-label="Link"><button class="btn" data-act="copy" data-v="${esc(guestUrl())}">Copiar</button></div></section>
   </div>
+  <section class="card"><h3>Acesso</h3><p class="mut">${ui.admin ? 'Você é a admin principal: cadastra quem organiza a festa. Cada um troca a própria senha aqui.' : 'Troque a senha que você recebeu por uma sua.'}</p>
+    <div class="row"><button class="btn" data-act="senha-open">Mudar minha senha</button>${ui.admin ? '<button class="btn" data-act="orgs-open">Organizadores</button>' : ''}</div></section>
   ${vDivulgar()}
   <section class="card"><h3>Dados da festa e regras</h3><div class="f3">
     <label class="l">Nome do evento${inp('config', 1, 'evento', c.evento)}</label>
@@ -555,7 +577,7 @@ const VIEWS = { inicio: vInicio, confirmar: vConfirmar, cardapio: vCardapioG, pa
 
 /* ================= diálogos ================= */
 const dlg = () => $('#dlg');
-function openDlg(html) { $('#dlg-body').innerHTML = html; dlg().showModal(); const f = $('#dlg-body input, #dlg-body textarea'); if (f) f.focus(); }
+function openDlg(html) { $('#dlg-body').innerHTML = html; if (!dlg().open) dlg().showModal(); const f = $('#dlg-body input, #dlg-body textarea'); if (f) f.focus(); }
 const closeDlg = () => dlg().close();
 
 // --- organizador: adicionar pessoa ou família ---
@@ -765,6 +787,8 @@ function bind() {
         i.type = ver ? 'text' : 'password'; b.setAttribute('aria-pressed', ver); b.setAttribute('aria-label', ver ? 'Ocultar senha' : 'Mostrar senha'); i.focus(); break;
       }
       case 'pw-forgot': openEsqueci(); break;
+      case 'senha-open': openMinhaSenha(); break;
+      case 'orgs-open': openOrganizadores(); break;
       // convidado
       case 'g-st': guestUpdate(id, { p_status: b.dataset.v }); break;
       case 'g-pick': case 'g-drop': {
@@ -818,6 +842,17 @@ function bind() {
     if (f.id === 'f-novasenha') {
       if (v.s !== v.s2) return toast('As duas senhas não são iguais.');
       try { await db.novaSenha(v.s); closeDlg(); toast('Senha alterada.'); location.hash = '#org'; }
+      catch (err) { toast(err.message); }
+      return;
+    }
+    if (f.id === 'f-minhasenha') {
+      if (v.s !== v.s2) return toast('As duas senhas novas não são iguais.');
+      try { await db.trocarSenha(v.a, v.s); closeDlg(); toast('Senha alterada.'); } catch (err) { toast(err.message); }
+      return;
+    }
+    if (f.id === 'f-org') {
+      const email = db.toEmail(v.u);
+      try { await db.rpc('criar_organizador', { p_email: email, p_senha: v.s }); toast(`Organizador ${email} cadastrado.`); openOrganizadores(); }
       catch (err) { toast(err.message); }
       return;
     }

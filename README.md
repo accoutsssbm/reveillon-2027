@@ -77,6 +77,17 @@ O site instala como app (ícone na tela inicial, abre sem a barra do navegador).
 
 O app continua precisando de internet para ver e salvar os dados da festa.
 
+## Organizadores e senhas
+
+A admin principal cadastra os outros organizadores pelo próprio app, sem entrar no Supabase.
+
+1. Crie só o **seu** usuário pelo Supabase (passo 5 da seção 1).
+2. Abra `supabase/03_organizadores.sql`, troque `SEU_USUARIO@familia.festa` pelo seu e-mail de login, exatamente como aparece em **Authentication → Users**, cole no **SQL Editor** e clique em **Run**. Se o e-mail estiver errado, aparece “Não achei o usuário”. Corrija e rode de novo.
+3. No app: **Painel → Acesso → Organizadores** → digite o usuário (ex.: `maria`) e uma senha inicial → **Cadastrar**. Passe usuário e senha para a pessoa.
+4. Cada organizador troca a própria senha em **Painel → Acesso → Mudar minha senha**. É preciso digitar a senha atual.
+
+Só a admin vê a lista e cadastra organizadores. Os demais organizadores veem apenas “Mudar minha senha”.
+
 ## Como as contas funcionam
 
 - **Comida:** cada receita tem “serve quantas pessoas”. O app multiplica pelo número de porções confirmadas (adulto = 1; criança = fração em “Criança come”). O café da manhã usa só quem marcou que vai dormir.
