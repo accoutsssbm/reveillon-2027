@@ -264,8 +264,26 @@ function vPagar() {
 function vLogin() {
   return `<section class="card login"><h1 class="pt">Organização</h1><p class="mut">Entre com o usuário e a senha que você recebeu.</p>
   <form id="f-login"><label class="l">Usuário ou e-mail<input name="u" autocomplete="username" required></label>
-  <label class="l">Senha<input name="s" type="password" autocomplete="current-password" required></label>
-  <button class="btn pri wide">Entrar</button></form></section>`;
+  <label class="l">Senha${pwField('s', 'current-password')}</label>
+  <button class="btn pri wide">Entrar</button></form>
+  <button type="button" class="btn ghost sm" data-act="pw-forgot">Esqueci a senha</button></section>`;
+}
+// campo de senha com botão de mostrar/ocultar
+const pwField = (name, ac) => `<span class="pw"><input name="${name}" type="password" autocomplete="${ac}" required ${ac === 'new-password' ? 'minlength="6"' : ''}><button type="button" class="btn ghost icon" data-act="pw-toggle" aria-label="Mostrar senha" aria-pressed="false">
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="x" d="M4 4l16 16"/></svg></button></span>`;
+function openEsqueci() {
+  const u = ($('#f-login [name=u]') || {}).value || '';
+  openDlg(`<h2>Recuperar senha</h2>
+  <p>Digite o e-mail cadastrado. Vamos mandar um link para você criar uma senha nova.</p>
+  <form id="f-esqueci"><label class="l">E-mail<input name="email" type="email" autocomplete="email" value="${esc(u.includes('@') ? u : '')}" required></label>
+  <p class="mut">Se você entra só com o nome (sem e-mail), não há para onde mandar o link: peça a quem administra a festa para trocar sua senha no Supabase.</p>
+  <div class="row"><button class="btn pri">Enviar link</button><button type="button" class="btn ghost" data-act="dlg-close">Cancelar</button></div></form>`);
+}
+function openNovaSenha() {
+  openDlg(`<h2>Criar senha nova</h2>
+  <form id="f-novasenha"><label class="l">Senha nova (mínimo 6 caracteres)${pwField('s', 'new-password')}</label>
+  <label class="l">Repita a senha nova${pwField('s2', 'new-password')}</label>
+  <div class="row"><button class="btn pri">Salvar senha</button></div></form>`);
 }
 function vSemConfig() {
   return `<section class="card login"><h1 class="pt">Falta configurar</h1><p>Abra o arquivo <code>js/config.js</code> e cole a URL e a chave <i>anon</i> do seu projeto Supabase. O passo a passo está no README.</p></section>`;
@@ -717,6 +735,11 @@ function bind() {
       case 'tema': toggleTheme(); break;
       case 'copy': copyText(b.dataset.v); break;
       case 'dlg-close': closeDlg(); break;
+      case 'pw-toggle': {
+        const i = b.parentElement.querySelector('input'), ver = i.type === 'password';
+        i.type = ver ? 'text' : 'password'; b.setAttribute('aria-pressed', ver); b.setAttribute('aria-label', ver ? 'Ocultar senha' : 'Mostrar senha'); i.focus(); break;
+      }
+      case 'pw-forgot': openEsqueci(); break;
       // convidado
       case 'g-st': guestUpdate(id, { p_status: b.dataset.v }); break;
       case 'g-pick': case 'g-drop': {
@@ -759,6 +782,17 @@ function bind() {
     const f = e.target, v = Object.fromEntries(new FormData(f));
     if (f.id === 'f-login') {
       try { auth = await db.login(v.u, v.s); await reload(); } catch (err) { toast(err.message); }
+      return;
+    }
+    if (f.id === 'f-esqueci') {
+      try { await db.recuperarSenha(v.email); closeDlg(); toast('Se esse e-mail estiver cadastrado, o link chega em alguns minutos. Veja também o spam.'); }
+      catch (err) { toast(err.message); }
+      return;
+    }
+    if (f.id === 'f-novasenha') {
+      if (v.s !== v.s2) return toast('As duas senhas não são iguais.');
+      try { await db.novaSenha(v.s); closeDlg(); toast('Senha alterada.'); location.hash = '#org'; }
+      catch (err) { toast(err.message); }
       return;
     }
     if (f.id === 'f-reg') {
@@ -816,6 +850,8 @@ async function start() {
   db.onAuth(s => { const had = !!auth; auth = s; if (!!s !== had) reload(); });
   auth = await db.session();
   await reload();
+  if (db.linkErro) toast('O link de recuperação expirou ou já foi usado. Peça outro em “Esqueci a senha”.');
+  else if (db.recuperando) { location.hash = '#org'; openNovaSenha(); }
   db.subscribe(changed);
   setInterval(() => { if (document.visibilityState === 'visible') reload(); }, 60000);
 }
