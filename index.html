@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Réveillon em Família 2027</title>
+<meta name="description" content="Confirme presença, veja o cardápio e sua parte da festa de Ano Novo 2027.">
+<meta name="theme-color" content="#f2f3f5">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192" type="image/png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Réveillon 2027">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Allura&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script>try{var t=JSON.parse(localStorage.getItem('rev27_tema'));if(t)document.documentElement.dataset.theme=t}catch(e){}</script>
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="#inicio"><img src="icons/icon.svg" alt="" width="32" height="32"><span>Réveillon 2027</span></a>
+  <span class="grow"></span>
+  <div id="modo" class="row"></div>
+  <button id="tema" class="btn ghost icon" type="button" aria-label="Mudar tema">
+    <svg class="sun" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>
+    <svg class="moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg>
+  </button>
+</header>
+<div class="app">
+  <nav id="nav" aria-label="Seções"></nav>
+  <main>
+    <div id="banner" class="alert bad" hidden></div>
+    <div id="view"><p class="mut pad">Carregando a festa…</p></div>
+  </main>
+</div>
+<dialog id="dlg"><div id="dlg-body"></div></dialog>
+<div id="toast" role="status" hidden><span id="toast-t"></span><button id="toast-b" type="button" hidden>Desfazer</button></div>
+<script src="js/vendor/supabase.js"></script>
+<script src="js/config.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

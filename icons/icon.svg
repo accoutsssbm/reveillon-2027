@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="m" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset=".46" stop-color="#bfc4cb"/><stop offset=".54" stop-color="#8a9099"/><stop offset="1" stop-color="#f1f2f4"/></linearGradient>
+    <radialGradient id="b" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#fff"/><stop offset=".4" stop-color="#c9cdd3"/><stop offset=".85" stop-color="#6d737c"/><stop offset="1" stop-color="#9aa0a8"/></radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#111215"/>
+  <g stroke="#9aa0a8" stroke-width="5" opacity=".35">
+    <path d="M70 40v180M100 40v150M130 40v200M160 40v140M352 40v140M382 40v200M412 40v150M442 40v180"/>
+  </g>
+  <circle cx="150" cy="128" r="54" fill="url(#b)"/>
+  <circle cx="370" cy="112" r="40" fill="url(#b)"/>
+  <path d="M150 182q-8 20 6 40" stroke="#c9cdd3" stroke-width="4" fill="none"/>
+  <text x="256" y="408" text-anchor="middle" font-family="Arial Black,Arial,Helvetica,sans-serif" font-weight="900" font-size="230" fill="url(#m)" stroke="#ffffff" stroke-width="4" letter-spacing="-10">27</text>
+  <path d="M262 92l7 17 18 7-18 7-7 17-7-17-18-7 18-7z" fill="#fff"/>
+</svg>
