@@ -68,6 +68,15 @@ A chave *anon* pode ficar pública no GitHub: ela só permite o que as regras do
 4. **Pessoas → Importar lista:** cole os nomes ou anexe um arquivo `.txt`, `.csv`, `.xlsx` ou contatos `.vcf`.
 5. **Painel → Link para os convidados:** copie e mande no grupo.
 
+## Instalar como app no celular
+
+O site instala como app (ícone na tela inicial, abre sem a barra do navegador). Funciona depois de publicado no GitHub Pages, porque precisa de endereço `https`.
+
+- **Android (Chrome):** aparece o botão **Instalar app** no topo da tela do convidado. Se não aparecer, menu ⋮ → **Instalar app** ou **Adicionar à tela inicial**.
+- **iPhone:** abra no **Safari** → **Compartilhar** → **Adicionar à Tela de Início**. O botão **Instalar app** mostra esse passo a passo.
+
+O app continua precisando de internet para ver e salvar os dados da festa.
+
 ## Como as contas funcionam
 
 - **Comida:** cada receita tem “serve quantas pessoas”. O app multiplica pelo número de porções confirmadas (adulto = 1; criança = fração em “Criança come”). O café da manhã usa só quem marcou que vai dormir.

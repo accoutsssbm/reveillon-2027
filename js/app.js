@@ -199,10 +199,10 @@ function famOpts(pref) {
     <label class="ck"><input type="checkbox" id="${pref}-junto" checked><span>Cobrar todos juntos, no nome da primeira pessoa</span></label>
     <p class="mut">Desmarque para cada adulto receber a própria cobrança. Dá para mudar depois.</p></div>`;
 }
-function regRow(i) {
+function regRow(i, org) {
   return `<div class="reg-row"><div class="f3">
-    <label class="l">Nome${i ? '' : ' (você)'}<input name="nome" required autocomplete="${i ? 'off' : 'name'}"></label>
-    <label class="l">WhatsApp${i ? ' (opcional)' : ''}<input name="tel" inputmode="tel" autocomplete="${i ? 'off' : 'tel'}" placeholder="(94) 9 9999-9999"></label>
+    <label class="l">Nome${i || org ? '' : ' (você)'}<input name="nome" required autocomplete="${i || org ? 'off' : 'name'}"></label>
+    <label class="l">WhatsApp${i || org ? ' (opcional)' : ''}<input name="tel" inputmode="tel" autocomplete="${i ? 'off' : 'tel'}" placeholder="(94) 9 9999-9999"></label>
     <label class="l">Idade<select name="tipo"><option value="adulto">Adulto</option><option value="crianca">Criança</option></select></label></div>
     <label class="ck"><input type="checkbox" name="dorme"><span>Vai dormir e tomar café da manhã</span></label>
     ${i ? '<button type="button" class="x" data-act="reg-del" aria-label="Tirar pessoa">Tirar</button>' : ''}</div>`;
@@ -373,13 +373,9 @@ function vPessoas() {
   const cnt = k => S.pessoas.filter(p => p.status === k).length;
   return `<h1 class="pt">Pessoas</h1>
   <div class="row stats">${tag(cnt('sim') + ' vão', 'ok')}${tag(cnt('talvez') + ' talvez', 'warn')}${tag(cnt('pend') + ' sem resposta')}${tag(cnt('nao') + ' não vão')}${tag((C.dA + C.dK) + ' dormem')}</div>
-  <form class="card add" id="f-pessoa"><h3>Adicionar</h3><div class="f3">
-    <label class="l">Nome<input name="nome" required></label>
-    <label class="l">WhatsApp<input name="tel" inputmode="tel"></label>
-    <label class="l">Idade<select name="tipo"><option value="adulto">Adulto</option><option value="crianca">Criança</option></select></label>
-    <label class="l">Resposta<select name="status">${opt(ST, 'pend')}</select></label></div>
-    <div class="row"><label class="ck"><input type="checkbox" name="dorme"><span>Vai dormir</span></label><span class="grow"></span>
-    <button type="button" class="btn" data-act="imp-open" data-mode="org">Importar lista</button><button class="btn pri">Adicionar</button></div></form>
+  <div class="card add"><h3>Adicionar</h3><p class="mut">Cadastre uma pessoa sozinha, uma família inteira ou alguém numa família que já existe.</p>
+    <div class="row"><button type="button" class="btn pri" data-act="pes-open">Adicionar pessoa ou família</button>
+    <button type="button" class="btn" data-act="imp-open" data-mode="org">Importar lista</button></div></div>
   <div class="cards">${ps.map(p => { const tel = S.contatos[p.id] || ''; const n = C.load[p.id] || 0;
     return `<div class="card pc ${p.status === 'nao' ? 'off' : ''}">
     <div class="r2">${inp('pessoas', p.id, 'nome', p.nome, { a: 'Nome', cls: 'strong' })}<button class="x" data-act="del" data-tb="pessoas" data-id="${p.id}">Excluir</button></div>
@@ -561,6 +557,35 @@ const VIEWS = { inicio: vInicio, confirmar: vConfirmar, cardapio: vCardapioG, pa
 const dlg = () => $('#dlg');
 function openDlg(html) { $('#dlg-body').innerHTML = html; dlg().showModal(); const f = $('#dlg-body input, #dlg-body textarea'); if (f) f.focus(); }
 const closeDlg = () => dlg().close();
+
+// --- organizador: adicionar pessoa ou família ---
+function openPessoas() {
+  const chefes = by(S.pessoas.filter(p => !p.de), 'nome');
+  openDlg(`<h2>Adicionar pessoa ou família</h2>
+  <form id="f-pes"><div id="pes-rows">${regRow(0, true)}</div>
+  <button type="button" class="btn" data-act="reg-add" data-w="pes-rows">+ Outra pessoa da família</button>
+  <div class="f2 mt"><label class="l">Família<select name="fam"><option value="">Nova família (a primeira pessoa é a responsável)</option>${chefes.map(p => `<option value="${p.id}">Entrar na família de ${esc(p.nome)}</option>`).join('')}</select></label>
+  <label class="l">Resposta<select name="status">${opt(ST, 'pend')}</select></label></div>
+  <label class="ck"><input type="checkbox" name="junto" checked><span>Cobrar a família junto, no nome da responsável (só vale para família nova)</span></label>
+  <div class="row"><button class="btn pri">Cadastrar</button><button type="button" class="btn ghost" data-act="dlg-close">Cancelar</button></div></form>`);
+}
+async function salvarPessoas(f, v) {
+  const rows = $$('.reg-row', f).map(r => ({ nome: $('[name=nome]', r).value.trim(), tel: $('[name=tel]', r).value, tipo: $('[name=tipo]', r).value, dorme: $('[name=dorme]', r).checked })).filter(r => r.nome);
+  if (!rows.length) return;
+  const base = r => ({ nome: r.nome, tipo: r.tipo, status: v.status, dorme: r.dorme });
+  closeDlg();
+  await write(async () => {
+    let ins;
+    if (v.fam) ins = await db.insert('pessoas', rows.map(r => ({ ...base(r), de: v.fam })));
+    else {
+      ins = await db.insert('pessoas', [{ ...base(rows[0]), cobrar_junto: !!v.junto }]);
+      if (rows.length > 1) ins = ins.concat(await db.insert('pessoas', rows.slice(1).map(r => ({ ...base(r), de: ins[0].id }))));
+    }
+    const tels = ins.map((p, i) => ({ pessoa_id: p.id, telefone: String(rows[i].tel || '').replace(/[^\d+]/g, '') })).filter(t => t.telefone);
+    if (tels.length) await db.insert('contatos', tels);
+    toast(`${ins.length} pessoa(s) cadastrada(s).`);
+  }, ['pessoas']);
+}
 
 // --- importar lista de pessoas ---
 let imp = { mode: 'org', rows: [] };
@@ -749,7 +774,8 @@ function bind() {
         catch (err) { toast(err.message); }
         reload([b.dataset.tb]); break;
       }
-      case 'reg-add': { const w = $('#reg-rows'); w.insertAdjacentHTML('beforeend', regRow(w.children.length)); $$('input[name="nome"]', w).pop().focus(); break; }
+      case 'reg-add': { const w = $('#' + (b.dataset.w || 'reg-rows')); w.insertAdjacentHTML('beforeend', regRow(w.children.length, !!b.dataset.w)); $$('input[name="nome"]', w).pop().focus(); break; }
+      case 'pes-open': openPessoas(); break;
       case 'reg-del': b.closest('.reg-row').remove(); break;
       // importação
       case 'imp-open': openImport(b.dataset.mode); break;
@@ -802,11 +828,8 @@ function bind() {
       return;
     }
     if (!auth) return;
+    if (f.id === 'f-pes') return salvarPessoas(f, v);
     const nome = String(v.nome || '').trim(); if (!nome) return;
-    if (f.id === 'f-pessoa') await write(async () => {
-      const [p] = await db.insert('pessoas', [{ nome, tipo: v.tipo, status: v.status, dorme: !!v.dorme }]);
-      const t = String(v.tel || '').replace(/[^\d+]/g, ''); if (t) await db.insert('contatos', [{ pessoa_id: p.id, telefone: t }]);
-    }, ['pessoas']);
     if (f.id === 'f-insumo') await write(() => db.insert('insumos', [{ nome, un: v.un || 'un', preco: num(v.preco), grupo: String(v.grupo || 'Outros').trim() || 'Outros', est: false }]), ['insumos']);
     if (f.id === 'f-item') await write(() => db.insert('itens', [{ nome, cat: v.cat, tipo: v.tipo, n: num(v.n) || 1, conta: 'todos', un: v.un || 'un', preco: num(v.preco), sel: true }]), ['itens']);
     if (f.id === 'f-decor') await write(() => db.insert('decor', [{ nome, local: String(v.local || 'Outros').trim() || 'Outros', descr: v.descr || '', busca: nome, sel: true, mat: [] }]), ['decor']);
@@ -841,10 +864,30 @@ const HERO_SVG = (() => {
   return s;
 })();
 
+/* ================= instalar como app ================= */
+function initInstalar() {
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(() => {});
+  const b = $('#instalar');
+  if (matchMedia('(display-mode: standalone)').matches || navigator.standalone) return; // já está aberto como app
+  const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  let pedido = null;
+  addEventListener('beforeinstallprompt', e => { e.preventDefault(); pedido = e; b.hidden = false; });
+  addEventListener('appinstalled', () => { b.hidden = true; pedido = null; });
+  if (ios) b.hidden = false;
+  b.addEventListener('click', async () => {
+    if (pedido) { pedido.prompt(); await pedido.userChoice; pedido = null; b.hidden = true; return; }
+    openDlg(`<h2>Instalar no iPhone</h2>
+    <p>1. Abra este endereço no <b>Safari</b>.<br>2. Toque em <b>Compartilhar</b> (o quadrado com a seta para cima).<br>3. Escolha <b>Adicionar à Tela de Início</b> e toque em <b>Adicionar</b>.</p>
+    <p class="mut">O ícone do Réveillon 2027 aparece na tela do celular e abre como app, sem a barra do navegador.</p>
+    <div class="row"><button class="btn pri" data-act="dlg-close">Entendi</button></div>`);
+  });
+}
+
 /* ================= início ================= */
 async function start() {
   applyTheme(store.get('rev27_tema', matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
   $('#tema').addEventListener('click', toggleTheme);
+  initInstalar();
   initToast(); bind();
   if (!db.configured) { loaded = true; return schedule(); }
   db.onAuth(s => { const had = !!auth; auth = s; if (!!s !== had) reload(); });
